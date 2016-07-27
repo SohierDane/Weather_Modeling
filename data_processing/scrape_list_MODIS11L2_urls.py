@@ -36,7 +36,7 @@ if __name__ == "__main__":
     first_yr = project_constants['FIRST_YR']
     last_yr = project_constants['LAST_YR']
     metadata_dlpath = project_constants['MODIS11L2_METADATA_PATH']
-    urls = get_all_hdf_urls()
+    urls = get_all_hdf_urls(first_yr, last_yr)
     save_path = metadata_dlpath + 'hdf_urls.txt'
     with open(save_path, 'w') as f_open:
         f_open.seek(0)
