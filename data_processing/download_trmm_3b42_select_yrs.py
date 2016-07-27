@@ -10,14 +10,14 @@ import requests
 from urllib import urlretrieve
 
 # constants
-min_yr = 2000
-max_yr = 2009
+first_yr = 2000
+last_yr = 2009
 mirador_dat_url = 'http://mirador.gsfc.nasa.gov/WWW-TMP/a998cd8b7287af47b194c23e65ce1769_all_data.txt?ftpscript=wget_data_only'
 output_directory = 'raw_data_downloads/'
 
 mirador_dat = requests.get(mirador_dat_url)
 mirador_dat = mirador_dat.text.strip().split('\n')
-yrs_to_download = [str(i) for i in range(min_yr, max_yr+1)]
+yrs_to_download = [str(i) for i in range(first_yr, last_yr+1)]
 
 for line in mirador_dat:
     if sum([1 if i in line else 0 for i in yrs_to_download]) > 0:

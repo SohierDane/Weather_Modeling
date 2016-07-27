@@ -9,8 +9,9 @@ import os
 
 
 def get_station_nms_in_yr(path):
-    stn_names = {(x[0], x[1]) for x in os.listdir(path).split('-')}
-    return stn_names
+    stn_names = [x.split('-') for x in os.listdir(path)]
+    stn_names = [(x[0], x[1]) for x in stn_names]
+    return set(stn_names)
 
 
 def get_names_in_yrs(first_yr, last_yr):
@@ -28,11 +29,15 @@ if __name__ == '__main__':
     first_yr = 2000
     last_yr = 2009
     nms = get_names_in_yrs(first_yr, last_yr)
-    USAF_names = [x[0] for x in nms]
-    WBAN_names = [x[1] for x in nms]
+    USAF_names = set([x[0] for x in nms])
+    WBAN_names = set([x[1] for x in nms])
     with open('relevant_USAF_codes.txt', 'w') as f_open:
+        f_open.seek(0)
         for nm in USAF_names:
             f_open.write(nm+'\n')
+        f_open.truncate()
     with open('relevant_WBAN_codes.txt', 'w') as f_open:
+        f_open.seek(0)
         for nm in WBAN_names:
             f_open.write(nm+'\n')
+        f_open.truncate()
