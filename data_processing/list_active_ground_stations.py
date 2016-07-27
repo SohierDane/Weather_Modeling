@@ -15,9 +15,8 @@ def get_station_nms_in_yr(path):
     return set(stn_names)
 
 
-def get_names_in_yrs(first_yr, last_yr):
+def get_names_in_yrs(first_yr, last_yr, top_GSOD_dir):
     yrs_to_check = [str(i) for i in range(first_yr, last_yr+1)]
-    top_GSOD_dir = 'gsod/'
     all_active_stations = set()
     for folder in os.listdir(top_GSOD_dir):
         if folder in yrs_to_check:
@@ -31,10 +30,11 @@ if __name__ == '__main__':
     project_constants = get_project_constants()
     first_yr = int(project_constants['FIRST_YR'])
     last_yr = int(project_constants['LAST_YR'])
-    metadata_path = project_constants['GSOD_METADATA_PATH']
-    nms = get_names_in_yrs(first_yr, last_yr)
+    raw_data_path = project_constants['RAW_GROUND_STATION_DATA_PATH']
+    nms = get_names_in_yrs(first_yr, last_yr, raw_data_path)
     USAF_names = set([x[0] for x in nms])
     WBAN_names = set([x[1] for x in nms])
+    metadata_path = project_constants['GSOD_METADATA_PATH']
     USAF_path = os.path.join(metadata_path, 'relevant_USAF_codes.txt')
     with open(USAF_path, 'w') as f_open:
         f_open.seek(0)
