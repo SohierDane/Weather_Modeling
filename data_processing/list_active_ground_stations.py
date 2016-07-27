@@ -29,10 +29,9 @@ def get_names_in_yrs(first_yr, last_yr):
 
 if __name__ == '__main__':
     project_constants = get_project_constants()
-    first_yr = project_constants['FIRST_YR']
-    last_yr = project_constants['LAST_YR']
+    first_yr = int(project_constants['FIRST_YR'])
+    last_yr = int(project_constants['LAST_YR'])
     metadata_path = project_constants['GSOD_METADATA_PATH']
-
     nms = get_names_in_yrs(first_yr, last_yr)
     USAF_names = set([x[0] for x in nms])
     WBAN_names = set([x[1] for x in nms])
