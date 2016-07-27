@@ -6,6 +6,7 @@ Expects file names in the format of: 165970-99999-2002.op
 With format: USAF ID-WBAN ID-year
 '''
 import os
+from get_constants import get_project_constants
 
 
 def get_station_nms_in_yr(path):
@@ -25,19 +26,26 @@ def get_names_in_yrs(first_yr, last_yr):
             all_active_stations = all_active_stations.union(cur_stations)
     return all_active_stations
 
+
 if __name__ == '__main__':
-    first_yr = 2000
-    last_yr = 2009
+    project_constants = get_project_constants()
+    first_yr = project_constants['FIRST_YR']
+    last_yr = project_constants['LAST_YR']
+    metadata_path = project_constants['GSOD_METADATA_PATH']
+
     nms = get_names_in_yrs(first_yr, last_yr)
     USAF_names = set([x[0] for x in nms])
     WBAN_names = set([x[1] for x in nms])
-    with open('relevant_USAF_codes.txt', 'w') as f_open:
+    USAF_path = os.path.join(metadata_path, 'relevant_USAF_codes.txt')
+    with open(USAF_path, 'w') as f_open:
         f_open.seek(0)
         for nm in USAF_names:
             f_open.write(nm+'\n')
         f_open.truncate()
-    with open('relevant_WBAN_codes.txt', 'w') as f_open:
+    WBAN_path = os.path.join(metadata_path, 'relevant_WBAN_codes.txt')
+    with open(WBAN_path, 'w') as f_open:
         f_open.seek(0)
         for nm in WBAN_names:
             f_open.write(nm+'\n')
         f_open.truncate()
+        f_open.close()
