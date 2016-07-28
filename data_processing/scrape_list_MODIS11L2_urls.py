@@ -32,7 +32,12 @@ def download_urls_in_subdir(*args):
         f_open.truncate()
 
 
-def save_all_hdf_urls(first_yr, last_yr, metadata_dlpath):
+if __name__ == "__main__":
+    project_constants = get_project_constants()
+    first_yr = project_constants['FIRST_YR']
+    last_yr = project_constants['LAST_YR']
+    metadata_dlpath = project_constants['MODIS11L2_METADATA_PATH']
+    metadata_dlpath += '/ftp_urls'
     ftp_root_url = 'http://e4ftl01.cr.usgs.gov/MOLT/MOD11_L2.006/'
     ftp_root_re = '\d\d\d\d\.\d\d\.\d\d'
     subdir_suffixes = get_urls(ftp_root_url, ftp_root_re)
@@ -43,12 +48,3 @@ def save_all_hdf_urls(first_yr, last_yr, metadata_dlpath):
     dl_args = [(url, ftp_root_url, metadata_dlpath) for url in subdir_urls]
     pool.map(download_urls_in_subdir, dl_args)
     print("MODIS urls downloaded")
-
-
-if __name__ == "__main__":
-    project_constants = get_project_constants()
-    first_yr = project_constants['FIRST_YR']
-    last_yr = project_constants['LAST_YR']
-    metadata_dlpath = project_constants['MODIS11L2_METADATA_PATH']
-    metadata_dlpath += '/ftp_urls'
-    save_all_hdf_urls(first_yr, last_yr, metadata_dlpath)
