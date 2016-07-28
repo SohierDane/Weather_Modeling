@@ -19,8 +19,7 @@ def get_urls(root_url, regex_str):
     return urls
 
 
-def download_urls_in_subdir(*args):
-    dir_suffix, ftp_root_url, metadata_dlpath = args
+def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
     dir_root_url = '/'.join([ftp_root_url, dir_suffix])
     cur_suffixes = get_urls(dir_root_url, 'MOD11_L2.A[a-zA-Z0-9\.]*\.hdf')
     modis_urls = ['/'.join([dir_root_url, x]) for x in cur_suffixes]
@@ -30,6 +29,14 @@ def download_urls_in_subdir(*args):
         for url in modis_urls:
             f_open.write(url+'\n')
         f_open.truncate()
+
+
+def download_wrapper(arg_list):
+    '''
+    Workaround for pool.map not allowing multiple arguments
+    '''
+    dir_suffix, ftp_root_url, metadata_dlpath = arg_list
+    download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath)
 
 
 if __name__ == "__main__":
@@ -46,5 +53,5 @@ if __name__ == "__main__":
     subdir_urls = ['/'.join([ftp_root_url, subdir]) for subdir in subdir_suffixes]
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     dl_args = [(url, ftp_root_url, metadata_dlpath) for url in subdir_urls]
-    pool.map(download_urls_in_subdir, dl_args)
+    pool.map(download_wrapper, dl_args)
     print("MODIS urls downloaded")
