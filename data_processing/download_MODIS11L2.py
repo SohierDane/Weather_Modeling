@@ -62,8 +62,10 @@ def download_time_for_all_dates(time, raw_data_dlpath, metadata_path,
     for url_file in ftp_url_files:
         with open(ftp_url_files_path+url_file, 'r') as f:
             url_list = f.read()
+        url_list = url_list.strip().split('\n')
         url_for_time = [x for x in url_list if
                         x[idx_start_of_time:idx_end_of_time] == time]
+        # skip time if for some reason it doesn't exist
         if len(url_for_time) == 1:
             url_for_time = url_for_time[0]
             download_one_datetime(url_for_time, time, raw_data_dlpath,
