@@ -38,8 +38,6 @@ ftp_pass = project_constants['EARTHDATA_PWD']
 raw_data_dlpath = project_constants['RAW_MODIS11L2_DATA_PATH']
 metadata_dlpath = project_constants['MODIS11L2_METADATA_PATH']
 
-ftp_root_url = 'http://e4ftl01.cr.usgs.gov/MOLT/MOD11_L2.006/'
-max_possible_days_in_yr = 366
 
 
 def download_yr(year, hr, min, raw_data_dlpath=raw_data_dlpath,
