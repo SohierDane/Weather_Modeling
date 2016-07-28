@@ -13,7 +13,7 @@ from get_constants import get_project_constants
 
 def get_urls(root_url, regex_str):
     html = requests.get(root_url).text
-    date_re = re.compile('\d\d\d\d\.\d\d\.\d\d')
+    date_re = re.compile(regex_str)
     url_suffixes = set(date_re.findall(html))
     url_suffixes = [x.encode('ascii') for x in url_suffixes]
     return url_suffixes
