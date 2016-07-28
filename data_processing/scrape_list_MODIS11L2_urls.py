@@ -49,8 +49,10 @@ if __name__ == "__main__":
     subdir_suffixes = get_urls(ftp_root_url, ftp_root_re)
     yrs_to_keep = [str(i) for i in range(int(first_yr), int(last_yr)+1)]
     subdir_suffixes = [x for x in subdir_suffixes if x[:4] in yrs_to_keep]
-    dl_args = [(dir_suffix, ftp_root_url, metadata_dlpath)
-                for dir_suffix in subdir_suffixes]
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    pool.map(wrapper_for_downloads, dl_args)
+    for subdir in subdir_suffixes:
+        download_urls_in_subdir(subdir, ftp_root_url, metadata_dlpath)
+#    dl_args = [(dir_suffix, ftp_root_url, metadata_dlpath)
+#                for dir_suffix in subdir_suffixes]
+#    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+#    pool.map(wrapper_for_downloads, dl_args)
     print("MODIS urls downloaded")
