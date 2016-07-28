@@ -23,7 +23,7 @@ def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
     dir_root_url = '/'.join([ftp_root_url, dir_suffix])
     cur_suffixes = get_urls(dir_root_url, 'MOD11_L2.A[a-zA-Z0-9\.]*\.hdf')
     modis_urls = ['/'.join([dir_root_url, x]) for x in cur_suffixes]
-    save_path = '_'.join([metadata_dlpath, dir_suffix, 'hdf_urls.txt'])
+    save_path = metadata_dlpath+dir_suffix+'_hdf_urls.txt'
     with open(save_path, 'w') as f_open:
         f_open.seek(0)
         for url in modis_urls:
@@ -31,11 +31,10 @@ def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
         f_open.truncate()
 
 
-def download_wrapper(arg_list):
+def wrapper_for_downloads(arg_list):
     '''
     Workaround for pool.map not allowing multiple arguments
     '''
-    dir_suffix, ftp_root_url, metadata_dlpath = arg_list
     download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath)
 
 
@@ -44,14 +43,14 @@ if __name__ == "__main__":
     first_yr = project_constants['FIRST_YR']
     last_yr = project_constants['LAST_YR']
     metadata_dlpath = project_constants['MODIS11L2_METADATA_PATH']
-    metadata_dlpath += '/ftp_urls'
+    metadata_dlpath += '/ftp_urls/'
     ftp_root_url = 'http://e4ftl01.cr.usgs.gov/MOLT/MOD11_L2.006/'
     ftp_root_re = '\d\d\d\d\.\d\d\.\d\d'
     subdir_suffixes = get_urls(ftp_root_url, ftp_root_re)
     yrs_to_keep = [str(i) for i in range(int(first_yr), int(last_yr)+1)]
     subdir_suffixes = [x for x in subdir_suffixes if x[:4] in yrs_to_keep]
-    subdir_urls = ['/'.join([ftp_root_url, subdir]) for subdir in subdir_suffixes]
+    dl_args = [(dir_suffix, ftp_root_url, metadata_dlpath)
+                for dir_suffix in subdir_suffixes]
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    dl_args = [(url, ftp_root_url, metadata_dlpath) for url in subdir_urls]
-    pool.map(download_wrapper, dl_args)
+    pool.map(wrapper_for_downloads, dl_args)
     print("MODIS urls downloaded")
