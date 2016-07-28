@@ -20,7 +20,7 @@ def get_urls(root_url, regex_str):
 
 
 def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
-    dir_root_url = ftp_root_url+dir_suffix
+    dir_root_url = ftp_root_url+dir_suffix+'/'
     cur_suffixes = get_urls(dir_root_url, 'MOD11_L2.A[a-zA-Z0-9\.]*\.hdf')
     modis_urls = ['/'.join([dir_root_url, x]) for x in cur_suffixes]
     save_path = metadata_dlpath+dir_suffix+'_hdf_urls.txt'
