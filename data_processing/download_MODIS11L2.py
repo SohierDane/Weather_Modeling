@@ -79,7 +79,7 @@ if __name__ == '__main__':
     ftp_upass = ftp_user_id+':'+ftp_pass
 
     # cookie file must exist for NASA's ftp system
-    cookie_path = metadata_dlpath+'/nasa_cookie.txt'
+    cookie_path = metadata_path+'/nasa_cookie.txt'
     open(cookie_path, 'a').close()
 
     # first time of day is 0005
