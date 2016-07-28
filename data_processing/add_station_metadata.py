@@ -1,5 +1,5 @@
 '''
-1) For each station identified as active, build a table with:
+1) For each ground station identified as active, build a table with:
     USAF ID, WBAN ID, lat, long
 2) add columns with distances to all other stations
 3) export data to csv
@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import os
 from get_constants import get_project_constants
+from list_active_ground_stations import list_active_stations
 
 
 def convert_to_rads(x):
@@ -36,6 +37,8 @@ def get_station_data(first_yr, last_yr, metadata_dir):
     active_ids_file_name = 'station_codes_active_{0}_to_{1}.txt'.format(
         first_yr, last_yr)
     active_stn_ID_path = os.path.join(metadata_dir, active_ids_file_name)
+    if not os.path.isfile(active_stn_ID_path):
+        list_active_stations()
     with open(active_stn_ID_path, 'r') as f_open:
         stn_ids = f_open.read()
     stn_ids = stn_ids.strip().split('\n')

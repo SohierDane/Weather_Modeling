@@ -26,7 +26,7 @@ def get_names_in_yrs(first_yr, last_yr, top_GSOD_dir):
     return all_active_stations
 
 
-if __name__ == '__main__':
+def list_active_stations():
     project_constants = get_project_constants()
     first_yr = project_constants['FIRST_YR']
     last_yr = project_constants['LAST_YR']
@@ -42,3 +42,6 @@ if __name__ == '__main__':
             line = nm[0]+', '+nm[1]+'\n'
             f_open.write(line)
         f_open.truncate()
+
+if __name__ == '__main__':
+    list_active_stations()
