@@ -1,9 +1,9 @@
-"""
+'''
 Extracts the urls from the NASA ftp website that will be used to
 download the MODIS11_L2 data.
 
 Each subdirectory in the NASA site is saved as a separate .txt file
-"""
+'''
 
 import requests
 import re
