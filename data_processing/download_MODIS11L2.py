@@ -59,7 +59,11 @@ def download_time_for_all_dates(time, raw_data_dlpath, metadata_path,
     idx_end_of_time = 79
     ftp_url_files_path = metadata_path+'/ftp_urls/'
     ftp_url_files = os.listdir(ftp_url_files_path)
+    counter = 0
     for url_file in ftp_url_files:
+        counter += 1
+        if counter % 100 == 0:
+            print '@ '+time+' file # '+str(counter)
         with open(ftp_url_files_path+url_file, 'r') as f:
             url_list = f.read()
         url_list = url_list.strip().split('\n')
@@ -89,6 +93,8 @@ if __name__ == '__main__':
     # first time of day is 0005
     times_to_dl = [str(x).zfill(2)+'05' for x in range(0, 24)]
     for time_of_day in times_to_dl:
+        print('processing '+time_of_day)
         download_time_for_all_dates(time_of_day, raw_data_dlpath,
                                     metadata_path, ftp_upass,
                                     cookie_path)
+    print('Downloads complete.')
