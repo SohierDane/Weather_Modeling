@@ -63,9 +63,11 @@ def download_time_for_all_dates(time, raw_data_dlpath, metadata_path,
         with open(ftp_url_files_path+url_file, 'r') as f:
             url_list = f.read()
         url_for_time = [x for x in url_list if
-                        x[idx_start_of_time:idx_end_of_time] == time][0]
-        download_one_datetime(url_for_time, time, raw_data_dlpath,
-                              ftp_upass, cookie_path)
+                        x[idx_start_of_time:idx_end_of_time] == time]
+        if len(url_for_time) == 1:
+            url_for_time = url_for_time[0]
+            download_one_datetime(url_for_time, time, raw_data_dlpath,
+                                  ftp_upass, cookie_path)
 
 
 if __name__ == '__main__':
