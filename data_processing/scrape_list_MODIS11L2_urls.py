@@ -31,7 +31,7 @@ def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
         f_open.truncate()
 
 
-def save_all_hdf_urls(first_yr, last_yr):
+def save_all_hdf_urls(first_yr, last_yr, metadata_dlpath):
     ftp_root_url = 'http://e4ftl01.cr.usgs.gov/MOLT/MOD11_L2.006/'
     ftp_root_re = '\d\d\d\d\.\d\d\.\d\d'
     subdir_suffixes = get_urls(ftp_root_url, ftp_root_re)
