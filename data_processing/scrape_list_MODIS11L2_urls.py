@@ -7,7 +7,6 @@ Each subdirectory in the NASA site is saved as a separate .txt file
 
 import requests
 import re
-import multiprocessing
 from get_constants import get_project_constants
 
 
@@ -31,13 +30,6 @@ def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
         f_open.truncate()
 
 
-def wrapper_for_downloads(arg_list):
-    '''
-    Workaround for pool.map not allowing multiple arguments
-    '''
-    download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath)
-
-
 if __name__ == "__main__":
     project_constants = get_project_constants()
     first_yr = project_constants['FIRST_YR']
@@ -51,8 +43,4 @@ if __name__ == "__main__":
     subdir_suffixes = [x for x in subdir_suffixes if x[:4] in yrs_to_keep]
     for subdir in subdir_suffixes:
         download_urls_in_subdir(subdir, ftp_root_url, metadata_dlpath)
-#    dl_args = [(dir_suffix, ftp_root_url, metadata_dlpath)
-#                for dir_suffix in subdir_suffixes]
-#    pool = multiprocessing.Pool(multiprocessing.cpu_count())
-#    pool.map(wrapper_for_downloads, dl_args)
     print("MODIS urls downloaded")
