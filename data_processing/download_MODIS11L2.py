@@ -36,6 +36,7 @@ def execute_download(url, output_path, ftp_upass, cookie_path):
             c.perform()
         except pycurl.error:
             sleep(30)
+            print("encountering ftp timeout error")
             execute_download(url, output_path, ftp_upass, cookie_path)
 
 
@@ -48,7 +49,7 @@ def download_one_datetime(url, time, raw_data_dlpath, ftp_upass, cookie_path):
     idx_browse_start = 57
     idx_hdf = 98
     date = url[idx_date_start:idx_date_end]
-    output_path_base = raw_data_dlpath+'/MODIS11L2.'+date+'.time'
+    output_path_base = raw_data_dlpath+'/MODIS11L2.'+date+'.'+time
     execute_download(url, output_path_base+'.hdf', ftp_upass, cookie_path)
     execute_download(url+'.xml', output_path_base+'.hdf.xml', ftp_upass, cookie_path)
     jpg_url = url[:idx_browse_start]+'BROWSE.'+url[idx_browse_start:idx_hdf]+'1.jpg'
