@@ -55,10 +55,17 @@ def format_df_stn_ids(df):
     return df
 
 
+def trim_to_useful_latitudes(df, min_lat, max_lat):
+    df = df[df['LAT'] > min_lat]
+    df = df[df['LAT'] < max_lat]
+    return df
+
+
 def build_distances_table(stn_ids, df):
     df = format_df_stn_ids(df)
     df = df.loc[df['ID'].isin(stn_ids)]
     df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)'])
+    df = trim_to_useful_latitudes(df, min_lat, max_lat)
     return df
 
 
@@ -80,10 +87,14 @@ if __name__ == '__main__':
     first_yr = '2000'
     last_yr = '2009'
     metadata_dir = '/Users/sohier/Desktop/Sample_weather_data'
-
+    max_lat = 50
+    min_lat = -50
 #    project_constants = get_project_constants()
 #    first_yr = project_constants['FIRST_YR']
 #    last_yr = project_constants['LAST_YR']
 #    metadata_dir = project_constants['GSOD_METADATA_PATH']
+#    max_lat = project_constants['MAX_LATITUDE']
+#    min_lat = project_constants['MIN_LATITUDE']
     stn_ids, df = get_station_data(first_yr, last_yr, metadata_dir)
-    df = build_distances_table(stn_ids, df)
+    df = build_distances_table(stn_ids, df, min_lat, max_lat)
+    
