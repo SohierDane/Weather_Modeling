@@ -63,9 +63,13 @@ def export_active_stations():
     raw_data_path = project_constants['RAW_GROUND_STATION_DATA_PATH']
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
     yrs_to_check = [str(i) for i in range(int(first_yr), int(last_yr)+1)]
+    counter= 0
     for folder in os.listdir(raw_data_path):
         if folder in yrs_to_check:
             for file in os.listdir(raw_data_path+'/'+folder):
+                counter += 1
+                if counter % 1000 == 0:
+                    print (str(counter)+' files processed')
                 f_path = '/'.join([raw_data_path, folder, file])
                 add_data_to_station_file(f_path, processed_data_path)
 
