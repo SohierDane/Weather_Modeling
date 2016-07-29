@@ -9,6 +9,7 @@ are included.
 import os.path
 import pycurl
 import certifi
+from time import sleep
 from get_constants import get_project_constants
 
 
@@ -31,7 +32,11 @@ def execute_download(url, output_path, ftp_upass, cookie_path):
         c.setopt(c.CAINFO, certifi.where())
         c.setopt(c.UNRESTRICTED_AUTH, True)
         c.setopt(c.WRITEDATA, f_out)
-        c.perform()
+        try:
+            c.perform()
+        except pycurl.error:
+            sleep(30)
+            execute_download(url, output_path, ftp_upass, cookie_path)
 
 
 def download_one_datetime(url, time, raw_data_dlpath, ftp_upass, cookie_path):
