@@ -3,8 +3,15 @@ Exports all station files in the active years to one file per station
 in the processed data folder.
 '''
 import os
-import pandas as pd
 from get_constants import get_project_constants
+
+
+def extract_date_info(yrmoda):
+    '''
+    unpacks NASA yrmoda string in to date, year, month, day
+    '''
+    date_parts = [yrmoda[:4], yrmoda[4:6], yrmoda[6:]]
+    return ['-'.join(date_parts)] + date_parts
 
 
 def process_raw_file(raw_f_path):
@@ -13,11 +20,19 @@ def process_raw_file(raw_f_path):
     splits date into more useful formats, and converts to csv format
     '''
     with open(raw_f_path, 'r') as f:
-        header = f.readline().strip().split()
+        # read one line to skip past the header
+        f.readline()
         data = [line.strip().split() for line in f.readlines()]
-    cols_to_keep = ['YEARMODA', 'TEMP', 'STP', 'MAX', 'MIN', 'PRCP']
-    col_to_keep_idxs = [header.index(x) for x in cols_to_keep]
-    return [[line[i] for i in col_to_keep_idxs] for line in data]
+    col_to_keep_idxs = [2, 3, 9, 17, 18, 19]
+    data = [[line[i] for i in col_to_keep_idxs] for line in data]
+    data = [extract_date_info(x[0])+x[1:] for x in data]
+    # strip precip flag off as separate column
+    for line in data:
+        precip_flag = line[-1][-1]
+        line[-1] = line[-1][:-1]
+        line += precip_flag
+    data = [', '.join(x)+'\n' for x in data]
+    return data
 
 
 def add_data_to_station_file(raw_f_path, processed_data_dir_path):
@@ -25,20 +40,20 @@ def add_data_to_station_file(raw_f_path, processed_data_dir_path):
     Expects input file names in the format of: 165970-99999-2002.op
     With format: USAF ID-WBAN ID-year
     '''
-    processed_data = process_raw_file(raw_f_path)
     idx_station_id = raw_f_path.rfind('/')+1
     idx_end_station_id = idx_station_id+12
     station_id = raw_f_path[idx_station_id:idx_end_station_id]
-    USAF, WBAN = station_id.split('-')
     output_path = processed_data_dir_path+'/'+station_id+'.csv'
     output_cols = ['Date', 'Year', 'Month', 'Day', 'Temp', 'STP',
-                   'Max_Temp', 'Min_Temp']
+                   'Max_Temp', 'Min_Temp', 'Precipitation', 'Precip_Flag']
     if not os.path.isfile(output_path):
         # if the file doesn't exist, create it and add a 2 line header
-        with open(output_path, 'w') as f:
-            f.write('USAF:'+USAF+'WBAN:'+WBAN+'\n')
-            f.write(', '.join(output_cols))
+        with open(output_path, 'w+') as f:
+            f.write(', '.join(output_cols)+'\n')
+    processed_data = process_raw_file(raw_f_path)
     with open(output_path, 'a') as f:
+        for line in processed_data:
+            f.write(line)
 
 
 def export_active_stations():
@@ -55,7 +70,6 @@ def export_active_stations():
                 add_data_to_station_file(f_path, processed_data_path)
 
 
-
-
 if __name__ == '__main__':
     export_active_stations()
+    print("finished exporting gsod data")
