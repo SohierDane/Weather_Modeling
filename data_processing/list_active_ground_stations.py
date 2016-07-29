@@ -6,7 +6,28 @@ Expects file names in the format of: 165970-99999-2002.op
 With format: USAF ID-WBAN ID-year
 '''
 import os
+import pandas as pd
+from calendar import isleap
 from get_constants import get_project_constants
+
+
+def count_station_days_data(USAF, WBAN, raw_data_path, year):
+    '''
+    Given a station's USAF and WBAN ID codes, returns data on the station's
+    activity.
+
+    Precipitation is ignored since many stations use the same value for
+    zero and missing precipitation.
+    '''
+    missing_val_codes = {'TEMP': '9999.9', 'STP': '9999.9',
+                         'MAX': '9999.9', 'MIN': '9999.9'}
+    station_path = raw_data_path+'/'+year+'/'+USAF+'-'+WBAN
+    station_path += '-'+year+'.op'
+    days_in_yr = {True: 366, False: 365}[isleap(year)]
+    missing_counts = {x: days_in_yr for x in ['TEMP', 'STP', 'MAX', 'MIN']}
+    if not os.path.isfile(station_path):
+        return missing_counts
+    df = pd.read_table(station_path)
 
 
 def get_station_nms_in_yr(path):
