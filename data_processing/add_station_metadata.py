@@ -1,8 +1,8 @@
 '''
-1) For each ground station identified as active, build a table with:
+- For each ground station identified as active, build a table with:
     USAF ID, WBAN ID, lat, long
-2) add columns with distances to all other stations
-3) export data to csv
+- generate matrices of distances to all other stations on the same continent
+- export data to csv
 '''
 
 from __future__ import division
@@ -45,11 +45,24 @@ def get_station_data(first_yr, last_yr, metadata_dir):
     return stn_ids, all_station_metadata
 
 
-def build_distances_table():
-    pass
+def format_df_stn_ids(df):
+    # add column to dataframe that matches convention of stn_ids
+    df['USAF'] = df['USAF'].apply(str)
+    df['USAF'] = df['USAF'].apply(lambda x: x.zfill(6))
+    df['WBAN'] = df['WBAN'].apply(str)
+    df['WBAN'] = df['WBAN'].apply(lambda x: x.zfill(5))
+    df['ID'] = df['USAF']+', '+df['WBAN']
+    return df
 
 
-def add_continent_id():
+def build_distances_table(stn_ids, df):
+    df = format_df_stn_ids(df)
+    df = df.loc[df['ID'].isin(stn_ids)]
+    df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)'])
+    return df
+
+
+def add_continent_id(df):
     '''
     'from http://www.weathergraphics.com/identifiers/:
     The WMO identifier, often called the index number relies on a 6-digit numeric
@@ -64,9 +77,13 @@ def add_continent_id():
 
 
 if __name__ == '__main__':
-    project_constants = get_project_constants()
-    first_yr = project_constants['FIRST_YR']
-    last_yr = project_constants['LAST_YR']
-    metadata_dir = project_constants['GSOD_METADATA_PATH']
-    stn_ids, all_station_metadata = get_station_data(first_yr, last_yr, metadata_dir)
-    build_distances_table()
+    first_yr = '2000'
+    last_yr = '2009'
+    metadata_dir = '/Users/sohier/Desktop/Sample_weather_data'
+
+#    project_constants = get_project_constants()
+#    first_yr = project_constants['FIRST_YR']
+#    last_yr = project_constants['LAST_YR']
+#    metadata_dir = project_constants['GSOD_METADATA_PATH']
+    stn_ids, df = get_station_data(first_yr, last_yr, metadata_dir)
+    df = build_distances_table(stn_ids, df)
