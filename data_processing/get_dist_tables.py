@@ -54,15 +54,16 @@ def calc_dist_tables():
     end_of_id_idx = active_stations[0].rfind('.')
     active_stations = set([x[:end_of_id_idx] for x in active_stations])
     metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
-    dist_tables = {'all': calc_table(metadata_df)}
-#    ctry_to_continent = get_country_to_continent_map()
-#    metadata_df['Continent'] = metadata_df.CTRY.apply(
-#        lambda x: ctry_to_continent[x])
-#    continents = {'Europe', 'Africa', 'Asia', 'North America',
-#                  'South America', 'Oceania'}
-#    dist_tables = {cont: calc_table(metadata_df[
-#                    metadata_df.Continent == cont])
-#                   for cont in continents}
+#    dist_tables = {'all': calc_table(metadata_df)}
+    
+    ctry_to_continent = get_country_to_continent_map()
+    metadata_df['Continent'] = metadata_df.CTRY.apply(
+        lambda x: ctry_to_continent[x])
+    continents = {'Europe', 'Africa', 'Asia', 'North America',
+                  'South America', 'Oceania'}
+    dist_tables = {cont: calc_table(metadata_df[
+                    metadata_df.Continent == cont])
+                   for cont in continents}
     for cont, d_table in dist_tables.iteritems():
         save_path = os.path.join(metadata_path, 'distances_'+cont)
         np.save(save_path, d_table)

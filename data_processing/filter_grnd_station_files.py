@@ -16,7 +16,7 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
 
     min/max latitudes multiplied by 1000 since gsod metadata units x1000
     '''
-    df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)'])
+    df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)', 'CTRY'])
     df = df[df['LAT'] > min_lat*1000]
     df = df[df['LAT'] < max_lat*1000]
     return df
