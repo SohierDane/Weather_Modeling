@@ -1,6 +1,7 @@
 """
 Calculates & saves distances between all stations on the same continent
 """
+from __future__ import division
 import os
 import pandas as pd
 import numpy as np
@@ -18,7 +19,7 @@ def haversine_dist(lat1, lon1, lat2, lon2, radius_Earth=6384):
     lon2 = np.radians(lon2)
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = (np.sin(dlat/2))**2 + np.cos(lat1) * np.cos(lat2) * (np.sin(dlon/2))**2
+    a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
     return radius_Earth * c
 
@@ -36,6 +37,7 @@ def calc_table_for_continent(df):
             distance = haversine_dist(df.LAT[i], df.LON[i], df.LAT[j], df.LON[j])
             dists[i, j] = distance
             dists[j, i] = distance
+    print(dists.mean())
     return dists
 
 
