@@ -31,9 +31,10 @@ def calc_table(df):
     """
     num_stations = len(df.ID.values)
     dists = np.zeros([num_stations, num_stations])
-    for i in xrange(num_stations-1):
-        for j in xrange(i+1, num_stations):
-            distance = haversine_dist(df.LAT[i], df.LON[i], df.LAT[j], df.LON[j])
+    for i in xrange(num_stations):
+        for j in xrange(i+1, num_stations+1):
+            distance = haversine_dist(df.LAT[i:i+1], df.LON[i:i+1],
+                                      df.LAT[j:j+1], df.LON[j:j+1])
             dists[i, j] = distance
             dists[j, i] = distance
     print(dists.mean())
