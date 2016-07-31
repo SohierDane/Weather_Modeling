@@ -71,8 +71,8 @@ def merge_stations(stn_pairs, processed_data_path):
             df1 = pd.read_csv(stn1_path, index_col=0, dtype={'Date': str})
             df2 = pd.read_csv(stn2_path, index_col=0, dtype={'Date': str})
             df1 = pd.concat([df1, df2[df2.index.isin(df1.index.values)]])
-            df1.to_csv(stn1)
-            os.remove(stn2)
+            df1.to_csv(stn1_path)
+            os.remove(stn2_path)
 
 
 def filter_stations():
