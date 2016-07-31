@@ -42,8 +42,8 @@ def get_stations_to_merge(df):
     wholly anonymised weather data.
 
     Some USAF codes are duplicated due to use as special codes:
-    049999 = USAF code for every station in Greenland
-    949999 = USAF code for every station in Australia
+    049999 = USAF code for many stations in Greenland
+    949999 = USAF code for many stations in Australia
     999999 = no USAF code, only WBAN code used
     '''
     special_USAF_codes = ['999999', '949999', '049999']
@@ -94,7 +94,7 @@ def filter_stations():
     merge_stations(stns_to_merge, processed_data_path)
     with open('stations merged.txt', 'w+') as f:
         for line in stns_to_merge:
-            f.write(line+'\n')
+            f.write(str(line)+'\n')
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ Adapted from https://gist.github.com/pamelafox/986163
 '''
 
 
-def get_country_code_map():
+def get_country_to_continent_map():
     code_to_continent = {
         'BD': 'Asia', 'BE': 'Europe', 'BF': 'Africa', 'BG': 'Europe', 'BA': 'Europe', 
         'BB': 'North America', 'BN': 'Asia', 'BO': 'South America', 'BH': 'Asia', 
