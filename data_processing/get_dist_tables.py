@@ -26,15 +26,15 @@ def haversine_dist(lat1, lon1, lat2, lon2, radius_Earth=6384):
 
 def calc_table(df):
     """
-    Give a dataframe of gsod metadata, returns a numpy array 
+    Give a dataframe of gsod metadata, returns a numpy array
     of the pairwise distances between stations.
     """
     num_stations = len(df.ID.values)
     dists = np.zeros([num_stations, num_stations])
-    for i in xrange(num_stations):
-        for j in xrange(i+1, num_stations+1):
-            distance = haversine_dist(df.LAT[i:i+1], df.LON[i:i+1],
-                                      df.LAT[j:j+1], df.LON[j:j+1])
+    for i in xrange(num_stations-1):
+        for j in xrange(i+1, num_stations):
+            distance = haversine_dist(df.LAT.iloc[i], df.LON.iloc[i],
+                                      df.LAT.iloc[j], df.LON.iloc[j])
             dists[i, j] = distance
             dists[j, i] = distance
     print(dists.mean())
