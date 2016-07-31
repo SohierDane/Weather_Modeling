@@ -93,7 +93,7 @@ def filter_stations():
     merge_stations(stns_to_merge, processed_data_path)
     with open('stations merged.txt', 'w+') as f:
         for line in stns_to_merge:
-            f.writeline(line+'\n')
+            f.write(line+'\n')
 
 
 if __name__ == '__main__':
