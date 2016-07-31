@@ -13,17 +13,13 @@ from get_constants import get_project_constants
 from list_active_ground_stations import list_active_stations
 
 
-def convert_to_rads(x):
-    return x*np.pi/180
-
-
 def haversine_dist(lat1, lon1, lat2, lon2, radius_Earth=6384):
     # accepts lat/long in degrees, converts to radians
     # default radius of earth is in kilometers
-    lat1 = convert_to_rads(lat1)
-    lat2 = convert_to_rads(lat2)
-    lon1 = convert_to_rads(lon1)
-    lon2 = convert_to_rads(lon2)
+    lat1 = np.radians(lat1)
+    lat2 = np.radians(lat2)
+    lon1 = np.radians(lon1)
+    lon2 = np.radians(lon2)
     dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = (np.sin(dlat/2))**2 + np.cos(lat1) * np.cos(lat2) * (np.sin(dlon/2))**2
@@ -55,17 +51,9 @@ def format_df_stn_ids(df):
     return df
 
 
-def trim_to_useful_latitudes(df, min_lat, max_lat):
-    df = df[df['LAT'] > min_lat]
-    df = df[df['LAT'] < max_lat]
-    return df
-
-
 def build_distances_table(stn_ids, df):
     df = format_df_stn_ids(df)
     df = df.loc[df['ID'].isin(stn_ids)]
-    df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)'])
-    df = trim_to_useful_latitudes(df, min_lat, max_lat)
     return df
 
 
@@ -97,4 +85,3 @@ if __name__ == '__main__':
 #    min_lat = project_constants['MIN_LATITUDE']
     stn_ids, df = get_station_data(first_yr, last_yr, metadata_dir)
     df = build_distances_table(stn_ids, df, min_lat, max_lat)
-    
