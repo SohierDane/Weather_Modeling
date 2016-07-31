@@ -52,7 +52,7 @@ def calc_dist_tables():
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
     active_stations = os.listdir(processed_data_path)
     end_of_id_idx = active_stations[0].rfind('.')
-    active_stations = set([x[end_of_id_idx] for x in active_stations])
+    active_stations = set([x[:end_of_id_idx] for x in active_stations])
     metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
     ctry_to_continent = get_country_to_continent_map()
     metadata_df['Continent'] = metadata_df.CTRY.apply(
