@@ -47,8 +47,8 @@ def add_data_to_station_file(raw_f_path, processed_data_dir_path):
     Expect input file names in the format of: 165970-99999-2002.op
     With format: USAF ID-WBAN ID-year
     '''
-    idx_end_station_id = raw_f_path.rfind('-')
-    station_id = os.path.basename(raw_f_path)[idx_end_station_id]
+    idx_end_station_id = os.path.basename(raw_f_path).rfind('-')
+    station_id = os.path.basename(raw_f_path)[:idx_end_station_id]
     output_path = os.path.join(processed_data_dir_path, station_id)+'.csv'
     output_cols = ['Date', 'Year', 'Month', 'Day', 'Temp', 'STP',
                    'Max_Temp', 'Min_Temp', 'Precipitation', 'Precip_Flag']
