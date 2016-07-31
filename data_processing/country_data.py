@@ -47,5 +47,6 @@ def get_country_to_continent_map():
          'AF': 'Asia', 'IQ': 'Asia', 'IS': 'Europe', 'IR': 'Asia', 'AM': 'Asia', 
          'AL': 'Europe', 'AO': 'Africa', 'AR': 'South America', 'AU': 'Oceania', 
          'AT': 'Europe', 'IN': 'Asia', 'TZ': 'Africa', 'AZ': 'Asia', 'IE': 'Europe', 
-         'ID': 'Asia', 'UA': 'Europe', 'QA': 'Asia', 'MZ': 'Africa'}
+         'ID': 'Asia', 'UA': 'Europe', 'QA': 'Asia', 'MZ': 'Africa', 'UK': 'Europe',
+         'BX': 'Oceania', 'SW': 'Europe'}
     return code_to_continent
