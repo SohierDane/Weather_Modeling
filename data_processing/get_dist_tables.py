@@ -67,8 +67,8 @@ def calc_dist_tables():
         np.save(save_path, d_table)
 
 
-#if __name__ == '__main__':
-#    start_time = time()
-#    calc_dist_tables()
-#    run_time = time()-start_time
-#    print('distance calculations complete in '+str(int(run_time))+' seconds')
+if __name__ == '__main__':
+    start_time = time()
+    calc_dist_tables()
+    run_time = time()-start_time
+    print('distance calculations complete in '+str(int(run_time))+' seconds')
