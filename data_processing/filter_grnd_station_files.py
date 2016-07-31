@@ -88,7 +88,8 @@ def filter_stations():
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
     metadata_df = trim_df_to_useful_latitudes(
         metadata_df, min_lat, max_lat)
-    delete_stations_not_in_list(metadata_df['ID'], processed_data_path)
+    stns_to_keep = [x+'.csv' for x in metadata_df['ID'].values]
+    delete_stations_not_in_list(stns_to_keep, processed_data_path)
     stns_to_merge = get_stations_to_merge(metadata_df)
     merge_stations(stns_to_merge, processed_data_path)
     with open('stations merged.txt', 'w+') as f:
