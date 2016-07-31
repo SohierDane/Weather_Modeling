@@ -24,11 +24,10 @@ def haversine_dist(lat1, lon1, lat2, lon2, radius_Earth=6384):
     return radius_Earth * c
 
 
-def calc_table_for_continent(df):
+def calc_table(df):
     """
-    Give a dataframe of gsod metadata filtered down to only the stations
-    on the same continent, returns a numpy array of the pairwise distances
-    between stations.
+    Give a dataframe of gsod metadata, returns a numpy array 
+    of the pairwise distances between stations.
     """
     num_stations = len(df.ID.values)
     dists = np.zeros([num_stations, num_stations])
@@ -54,14 +53,15 @@ def calc_dist_tables():
     end_of_id_idx = active_stations[0].rfind('.')
     active_stations = set([x[:end_of_id_idx] for x in active_stations])
     metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
-    ctry_to_continent = get_country_to_continent_map()
-    metadata_df['Continent'] = metadata_df.CTRY.apply(
-        lambda x: ctry_to_continent[x])
-    continents = {'Europe', 'Africa', 'Asia', 'North America',
-                  'South America', 'Oceania'}
-    dist_tables = {cont: calc_table_for_continent(metadata_df[
-                    metadata_df.Continent == cont])
-                   for cont in continents}
+    dist_tables = {'all': calc_table(metadata_df)}
+#    ctry_to_continent = get_country_to_continent_map()
+#    metadata_df['Continent'] = metadata_df.CTRY.apply(
+#        lambda x: ctry_to_continent[x])
+#    continents = {'Europe', 'Africa', 'Asia', 'North America',
+#                  'South America', 'Oceania'}
+#    dist_tables = {cont: calc_table(metadata_df[
+#                    metadata_df.Continent == cont])
+#                   for cont in continents}
     for cont, d_table in dist_tables.iteritems():
         save_path = os.path.join(metadata_path, 'distances_'+cont)
         np.save(save_path, d_table)
