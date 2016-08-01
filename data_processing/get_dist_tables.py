@@ -34,7 +34,9 @@ def calc_table(df):
             if counter % 10000 == 0:
                 print "processed "+str(counter)+" out of "+str(num_stations**2)
             distance = haversine_dist(df.LAT.iloc[i], df.LON.iloc[i],
-                                      df.LAT.iloc[j], df.LON.iloc[j])
+                                      df.cos_LAT.iloc[i],
+                                      df.LAT.iloc[j], df.LON.iloc[j],
+                                      df.cos_LAT.iloc[j])
             dists[i, j] = distance
             dists[j, i] = distance
     print(dists.mean())
