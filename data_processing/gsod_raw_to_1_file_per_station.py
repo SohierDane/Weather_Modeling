@@ -53,7 +53,7 @@ def add_data_to_station_file(raw_f_path, processed_data_dir_path):
     output_cols = ['Date', 'Year', 'Month', 'Day', 'Temp', 'STP',
                    'Max_Temp', 'Min_Temp', 'Precipitation', 'Precip_Flag']
     if not os.path.isfile(output_path):
-        # if the file doesn't exist, create it and add a 2 line header
+        # if the file doesn't exist, create it and add a header
         with open(output_path, 'w+') as f:
             f.write(', '.join(output_cols)+'\n')
     processed_data = process_raw_file(raw_f_path)
