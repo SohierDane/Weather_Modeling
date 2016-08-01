@@ -21,12 +21,15 @@ def convert_noaa_missing_to_null(df, stn):
     return df
 
 
-def clean_temp_data(df):
+def clean_temp_data(df, stn):
     '''
     Strips trailing * tokens, if any
     '''
     for col in ['Temp', 'Max_Temp', 'Min_Temp']:
-        df[col] = df[col].apply(lambda x: x[:3])
+        try:
+            df[col] = df[col].apply(lambda x: x[:3])
+        except KeyError:
+            print(stn)
     return df
 
 
