@@ -46,7 +46,7 @@ def clean_all_stations():
             print('cleaning station # '+str(counter))
         stn_path = os.path.join(processed_data_path, stn)
         df = pd.read_csv(stn_path)
-        df = convert_noaa_missing_to_null(df)
+        df = convert_noaa_missing_to_null(df, stn)
         if has_enough_days_complete_day(df):
             df = clean_temp_data(df)
             df.to_csv(stn_path)
