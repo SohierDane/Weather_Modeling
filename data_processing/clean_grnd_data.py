@@ -50,7 +50,7 @@ def clean_all_stations():
             df = clean_temp_data(df)
             df.to_csv(stn_path)
         else:
-            deleted_stns.appen(stn)
+            deleted_stns.append(stn)
             os.remove(stn_path)
 
     log_path = os.path.join(metadata_path, 'stations_with_too_little_data.txt')
