@@ -16,7 +16,7 @@ def download_trmm(mirador_dat_url, output_dir):
     # mirador dat website is a list of the actual file urls
     mirador_dat = requests.get(mirador_dat_url)
     mirador_dat = mirador_dat.text.strip().split('\n')
-    yrs_to_download = [str(i) for i in range(first_yr, last_yr+1)]
+    yrs_to_download = [i for i in range(int(first_yr), int(last_yr)+1)]
 
     for line in mirador_dat:
         if sum([1 if i in line else 0 for i in yrs_to_download]) > 0:
