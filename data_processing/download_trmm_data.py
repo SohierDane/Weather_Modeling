@@ -36,7 +36,7 @@ if __name__ == '__main__':
     first_yr = project_constants['FIRST_YR']
     last_yr = project_constants['LAST_YR']
     trmm_3b42_url = 'http://mirador.gsfc.nasa.gov/WWW-TMP/a998cd8b7287af47b194c23e65ce1769_all_data.txt?ftpscript=wget_data_only'
-    trmm_3b43_url = 'http://mirador.gsfc.nasa.gov/WWW-TMP/94fe384fcb12dd1db9f7c37bd5da8853_all_data.txt?ftpscript=wget_data_only'    
+    trmm_3b43_url = 'http://mirador.gsfc.nasa.gov/WWW-TMP/94fe384fcb12dd1db9f7c37bd5da8853_all_data.txt?ftpscript=wget_data_only'
     download_trmm(trmm_3b42_url, project_constants['RAW_TRMM_3B42_DATA_PATH'])
     print "3b42 downloads complete"
     download_trmm(trmm_3b43_url, project_constants['RAW_TRMM_3B43_DATA_PATH'])
