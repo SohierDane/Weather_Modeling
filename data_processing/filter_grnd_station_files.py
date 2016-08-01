@@ -53,7 +53,7 @@ def get_stations_to_merge(df):
     WBAN_matches = df[df.WBAN.duplicated() & ~(df.WBAN == '99999')
                       ].groupby('WBAN').groups.keys()
     station_matches.update([tuple(df[df.WBAN == x].ID.values) for x in WBAN_matches])
-    station_matches = [[(x[0], i) for i in x[1:]] for x in station_matches]
+    station_matches = set([[(x[0], i) for i in x[1:]] for x in station_matches])
     return sorted([x for x in itertools.chain.from_iterable(station_matches)])
 
 
