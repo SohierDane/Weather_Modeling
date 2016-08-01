@@ -24,7 +24,7 @@ def download_trmm(mirador_dat_url, output_dir):
             Set file name as the last portion of the url.
             Should look something like '3B42_Daily.20160429.7.nc4'
             '''
-            fpath = output_dir+line.split('/')[-1]
+            fpath = os.path.join(output_dir, line.split('/')[-1])
             fpath = fpath.encode('ascii')
             # ignore files that have already been downloaded
             if not os.path.isfile(fpath):
