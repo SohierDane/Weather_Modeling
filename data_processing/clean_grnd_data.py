@@ -39,13 +39,15 @@ def clean_all_stations():
         counter += 1
         if counter % 100 == 0:
             print('cleaning station # '+str(counter))
-        df = pd.read_csv(os.path.join(processed_data_path, stn))
+        stn_path = os.path.join(processed_data_path, stn)
+        df = pd.read_csv(stn_path)
         df = convert_noaa_missing_to_null(df)
         if has_enough_days_complete_day(df):
             df = clean_temp_data(df)
+            df.to_csv(stn_path)
         else:
             deleted_stns.appen(stn)
-            os.remove(stn)
+            os.remove(stn_path)
 
     log_path = os.path.join(metadata_path, 'stations_with_too_little_data.txt')
     with open(log_path, 'w+') as f:
