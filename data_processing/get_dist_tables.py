@@ -41,6 +41,12 @@ def calc_table(df):
     return dists
 
 
+def calc_table_2(df):
+    dists = {}
+    num_stations = len(df.ID.values)
+    # add stn_id:[list of ids within 1000 km radius box]
+
+
 def calc_dist_tables():
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
