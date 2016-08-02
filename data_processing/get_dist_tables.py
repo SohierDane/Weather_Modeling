@@ -9,15 +9,14 @@ from time import time
 from get_constants import get_project_constants
 
 
-def haversine_dist(lat1, lon1, lat2, lon2, cos_lat_1, cos_lat_2,
+def haversine_dist(lat1, lon1, cos_lat_1, lat2, lon2, cos_lat_2,
                    radius_Earth=6384):
     # expects lat/long in radians
     # default radius of earth is in kilometers
     dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = np.sin(dlat/2)**2 + cos_lat_1 * cos_lat_2 * np.sin(dlon/2)**2
-    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
-    return radius_Earth * c
+    return 2 * radius_Earth * np.arctan2(np.sqrt(a), np.sqrt(1-a))
 
 
 def calc_table(df):
@@ -49,6 +48,8 @@ def load_metadata(metadata_path):
         metadata_path, station_metadata_file),
         dtype={'USAF': str, 'WBAN': str})
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
+    metadata_df['LAT'] = metadata_df['LAT']/1000
+    metadata_df['LON'] = metadata_df['LON']/1000
     metadata_df['LAT'] = metadata_df['LAT'].apply(np.radians)
     metadata_df['LON'] = metadata_df['LON'].apply(np.radians)
     metadata_df['cos_LAT'] = metadata_df['LAT'].apply(np.cos)
