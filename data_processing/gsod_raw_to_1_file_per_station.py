@@ -67,7 +67,7 @@ def delete_existing_data(processed_data_dir):
     Existing data must be erased to avoid double counting years
     """
     for file in os.listdir(processed_data_dir):
-        os.remove(file)
+        os.remove(os.path.join(processed_data_dir, file))
 
 
 def export_active_stations():
