@@ -24,7 +24,7 @@ def clean_temp_data(df, stn):
     Strips trailing * tokens, if any
     '''
     for col in ['Temp', 'Max_Temp', 'Min_Temp']:
-        df[col] = df[col].apply(lambda x: x.rstrip('*'))
+        df[col] = df[col].apply(lambda x: str(x).rstrip('*'))
     return df
 
 
