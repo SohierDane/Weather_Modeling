@@ -53,7 +53,7 @@ def clean_all_stations():
         df = convert_noaa_missing_to_null(df, stn)
         if has_enough_days_complete_day(df):
             df = clean_temp_data(df, stn)
-            df.to_csv(stn_path)
+            df.to_csv(stn_path, index=False)
         else:
             deleted_stns.append(stn)
             os.remove(stn_path)
