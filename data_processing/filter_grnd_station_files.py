@@ -19,6 +19,9 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
     df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)', 'CTRY'])
     df = df[df['LAT'] > min_lat*1000]
     df = df[df['LAT'] < max_lat*1000]
+    # -99999 is code for missing lat/lon
+    df = df[df['LAT'] != -99999]
+    df = df[df['LON'] != -99999]
     return df
 
 
