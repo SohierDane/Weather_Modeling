@@ -36,6 +36,11 @@ def has_enough_days_complete_day(df):
     return len(df.dropna()) > 0
 
 
+def load_station(path):
+        df = pd.read_csv(path, dtype=str)
+        return df
+
+
 def clean_all_stations():
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
@@ -47,8 +52,7 @@ def clean_all_stations():
         if counter % 100 == 0:
             print('cleaning station # '+str(counter))
         stn_path = os.path.join(processed_data_path, stn)
-        df = pd.read_csv(stn_path, dtype=str)
-        df.columns = df.columns.str.strip()
+        df = load_station(stn_path)
         df = convert_noaa_missing_to_null(df, stn)
         if has_enough_days_complete_day(df):
             df = clean_temp_data(df, stn)
