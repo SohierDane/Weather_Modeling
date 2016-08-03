@@ -55,7 +55,7 @@ def add_data_to_station_file(raw_f_path, processed_data_dir_path):
     if not os.path.isfile(output_path):
         # if the file doesn't exist, create it and add a header
         with open(output_path, 'w+') as f:
-            f.write(', '.join(output_cols)+'\n')
+            f.write(','.join(output_cols)+'\n')
     processed_data = process_raw_file(raw_f_path)
     with open(output_path, 'a') as f:
         for line in processed_data:
