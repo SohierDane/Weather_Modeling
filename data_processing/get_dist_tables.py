@@ -31,7 +31,7 @@ def calc_table(df):
         for j in xrange(i+1, num_stations):
             counter += 1
             if counter % 10000 == 0:
-                print "processed "+str(counter)+" out of "+str(num_stations**2)
+                print "processed "+str(counter)+" out of "+str(num_stations**2/2)
             distance = haversine_dist(df.LAT.iloc[i], df.LON.iloc[i],
                                       df.cos_LAT.iloc[i],
                                       df.LAT.iloc[j], df.LON.iloc[j],
@@ -54,13 +54,6 @@ def load_metadata(metadata_path):
     metadata_df['LON'] = metadata_df['LON'].apply(np.radians)
     metadata_df['cos_LAT'] = metadata_df['LAT'].apply(np.cos)
     return metadata_df
-
-
-def calc_table_2(df):
-    dists = {}
-    num_stations = len(df.ID.values)
-    # add stn_id:[list of ids within 1000 km radius box]
-    pass
 
 
 def calc_dist_tables():
