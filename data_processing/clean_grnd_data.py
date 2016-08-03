@@ -33,10 +33,8 @@ def has_enough_days_complete_day(df):
 
 
 def load_station(path):
-        column_nms = ['Date', 'Year', 'Month', 'Day', 'Temp', 'STP',
-                   'Max_Temp', 'Min_Temp', 'Precipitation', 'Precip_Flag']
-        col_nm_map = {col: str for col in column_nms}
-        df = pd.read_csv(path, dtype=col_nm_map)
+        # note that setting dtype to str does not appear to actually work.
+        df = pd.read_csv(path, dtype=str)
         return df
 
 
