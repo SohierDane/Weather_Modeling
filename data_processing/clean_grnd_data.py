@@ -12,10 +12,10 @@ from get_constants import get_project_constants
 def convert_noaa_missing_to_null(df, stn):
     ''' converts noaa codes for missing data to null values'''
     df.replace({'9999.9': nan}, inplace=True)
-    try:
-        df['Precipitation'].replace({'99.99': nan}, inplace=True)
-    except KeyError:
-        print "key error for "+stn
+    df['Precipitation'].replace({'99.99': nan}, inplace=True)
+    df['Precipitation'].replace({'99.9': nan}, inplace=True)
+    df['Precipitation'].replace({99.99: nan}, inplace=True)
+    df['Precipitation'].replace({99.9: nan}, inplace=True)
     return df
 
 
