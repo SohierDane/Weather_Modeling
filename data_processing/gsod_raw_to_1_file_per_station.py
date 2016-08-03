@@ -62,6 +62,14 @@ def add_data_to_station_file(raw_f_path, processed_data_dir_path):
             f.write(line)
 
 
+def delete_existing_data(processed_data_dir):
+    """
+    Existing data must be erased to avoid double counting years
+    """
+    for file in os.listdir(processed_data_dir):
+        os.remove(file)
+
+
 def export_active_stations():
     '''
     For all files in all folders within the project timeframe, export
@@ -72,6 +80,7 @@ def export_active_stations():
     last_yr = project_constants['LAST_YR']
     raw_data_path = project_constants['RAW_GROUND_STATION_DATA_PATH']
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
+    delete_existing_data(processed_data_path)
     yrs_to_check = [str(i) for i in range(int(first_yr), int(last_yr)+1)]
     counter = 0
     for folder in os.listdir(raw_data_path):
