@@ -12,11 +12,7 @@ from get_constants import get_project_constants
 def convert_noaa_missing_to_null(df, stn):
     ''' converts noaa codes for missing data to null values'''
     df.replace({'9999.9': nan}, inplace=True)
-    try:
-        df['Precipitation'].replace({'99.99': nan}, inplace=True)
-    except KeyError:
-        print(stn)
-        print(df.head)
+    df['Precipitation'].replace({'99.99': nan}, inplace=True)
     return df
 
 
@@ -25,10 +21,7 @@ def clean_temp_data(df, stn):
     Strips trailing * tokens, if any
     '''
     for col in ['Temp', 'Max_Temp', 'Min_Temp']:
-        try:
-            df[col] = df[col].apply(lambda x: x[:3])
-        except KeyError:
-            print(stn)
+        df[col] = df[col].apply(lambda x: x.rstrip('*'))
     return df
 
 
