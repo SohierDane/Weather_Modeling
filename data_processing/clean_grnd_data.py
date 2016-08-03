@@ -15,7 +15,7 @@ def convert_noaa_missing_to_null(df, stn):
     try:
         df['Precipitation'].replace({'99.99': nan}, inplace=True)
     except KeyError:
-        print stn
+        print "key error for "+stn
     return df
 
 
