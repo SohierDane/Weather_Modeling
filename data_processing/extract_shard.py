@@ -24,7 +24,8 @@ def get_country_data_shard(country_code):
     files_to_archive = metadata_df.ID.values
     files_to_archive = [os.path.join(metadata_path, x+'.csv') for x in files_to_archive]
     zip_path = os.path.join(metadata_path, country_code+'_shard.zip')
-    z = zipfile.Zipfile(zip_path, 'w')
+    zip_path = zip_path.encode('ascii')
+    z = zipfile.ZipFile(zip_path, 'w')
     for file in files_to_archive:
         z.write(file)
     z.close()
