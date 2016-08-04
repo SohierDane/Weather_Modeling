@@ -47,13 +47,13 @@ def delete_stations_not_in_list(safelist, tgt_dir):
 def get_stations_to_merge(df):
     '''
     Identifies pairs of stations that should be merged based on their ID codes.
-    If multiple stations must be merged into, first item pair (x[0]) is stable.
+    If multiple stations must be merged into, first item pair (x[0]) is stable
+    across pairs.
 
     Does not attemp a name based merge due to low quality
     of the station name data (see high frequency of names such as
     'BOGUS FRENCH' or '...'). My personal favorite is 'NAME AND LOC UNKN'
-    which covers 11 stations. It remains unclear what one could due with
-    wholly anonymised weather data.
+    which covers 11 stations.
 
     Some USAF codes are duplicated due to use as special codes:
     049999 = USAF code for many stations in Greenland
@@ -73,7 +73,9 @@ def get_stations_to_merge(df):
 
 def merge_stations(stn_pairs, processed_data_path):
     '''
-    Merges specified station files
+    Merges specified station files.
+
+    Todo: update to always use either newest or oldest station
     '''
     active_stns = set(os.listdir(processed_data_path))
     for pair in stn_pairs:
@@ -96,7 +98,7 @@ def filter_stations():
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
     max_lat = project_constants['MAX_LATITUDE']
     min_lat = project_constants['MIN_LATITUDE']
-    station_metadata_file = 'ish-history.csv'
+    station_metadata_file = 'isd-history.csv'
     metadata_df = pd.read_csv(os.path.join(
         metadata_path, station_metadata_file),
         dtype={col: str for col in ['USAF', 'WBAN', 'BEGIN', 'END']})

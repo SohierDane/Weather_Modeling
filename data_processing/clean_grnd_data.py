@@ -11,9 +11,8 @@ from get_constants import get_project_constants
 
 def convert_noaa_missing_to_null(df, stn):
     ''' converts noaa codes for missing data to null values'''
-    df.replace({'9999.9': nan}, inplace=True)
-    df['Precipitation'].replace({'99.99': nan}, inplace=True)
-    df['Precipitation'].replace({'99.9': nan}, inplace=True)
+    df.replace({x: nan for x in ['9999.9', '99999', '-99999', '9999', '99.99',
+                                 '999.9', '99.9']}, inplace=True)
     df['Precipitation'].replace({99.99: nan}, inplace=True)
     df['Precipitation'].replace({99.9: nan}, inplace=True)
     return df
