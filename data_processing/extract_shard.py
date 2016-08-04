@@ -11,11 +11,12 @@ from get_constants import get_project_constants
 def get_country_data_shard(country_code):
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
+    metadata_path = os.path.join(metadata_path, 'metadata')
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-    station_metadata_file = 'ish-history.csv'
+    station_metadata_file = 'isd-history.csv'
     metadata_df = pd.read_csv(os.path.join(
         metadata_path, station_metadata_file),
-        dtype={'USAF': str, 'WBAN': str})
+        dtype={col: str for col in ['USAF', 'WBAN', 'BEGIN', 'END']})
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
     active_stations = os.listdir(processed_data_path)
     active_stations = [x[:x.rfind('.')] for x in active_stations]
