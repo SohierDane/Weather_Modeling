@@ -23,6 +23,7 @@ def download_n_unpack(url, save_dir):
 
 
 def download_gsod_yr(yr, save_dir):
+    print "now downloading "+str(yr)
     if not os.path.isdir(save_dir+str(yr)):
         os.mkdir(os.path.join(save_dir, str(yr)))
     root_url = 'http://www1.ncdc.noaa.gov/pub/data/gsod/'
@@ -44,8 +45,8 @@ def download_all_of_gsod(save_dir):
         download_gsod_yr(year, save_dir)
         print "downloaded "+str(year)
 
-#
-#if __name__ == '__main__':
-#    project_constants = get_project_constants()
-#    raw_data_dlpath = project_constants['RAW_GROUND_STATION_DATA_PATH']
-#    download_all_of_gsod(raw_data_dlpath)
+
+if __name__ == '__main__':
+    project_constants = get_project_constants()
+    raw_data_dlpath = project_constants['RAW_GROUND_STATION_DATA_PATH']
+    download_all_of_gsod(raw_data_dlpath)
