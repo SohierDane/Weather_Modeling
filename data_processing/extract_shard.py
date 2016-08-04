@@ -17,10 +17,10 @@ def get_country_data_shard(country_code):
     metadata_df = weather_mod_utilities.load_metadata(metadata_path)
     active_stations = os.listdir(processed_data_path)
     active_stations = [x[:x.rfind('.')] for x in active_stations]
+    pdb.set_trace()    
     print "Found "+str(len(active_stations))+" total stations"
     metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
-    metadata_df = metadata_df[metadata_df.CTRY == country_code]
-    pdb.set_trace()
+    metadata_df = metadata_df[metadata_df.CTRY == country_code]    
     print "Found "+str(len(metadata_df))+" stations in "+country_code
     files_to_archive = metadata_df.ID.values
     files_to_archive = [os.path.join(processed_data_path, x+'.csv') for x in files_to_archive]
