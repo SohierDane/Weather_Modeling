@@ -14,14 +14,25 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
     Trim DF to all processed station data files within valid latitudes
     and with enough metadata to use
 
-    min/max latitudes multiplied by 1000 since gsod metadata units x1000
+    Min/max latitudes multiplied by 1000 since gsod metadata
+    units are 1/1000 degree.
+
+    Lowest real point on dry land is the border of the dead sea @ 418 M.
+    Anything less than that is an invalid entry or a missing/-9999 code.
     '''
-    df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(.1M)', 'CTRY'])
+    elevation_of_lowest_pt_on_dry_land = -418
+    df = df[df['ELEV(M)'] >= elevation_of_lowest_pt_on_dry_land]
+    df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(M)', 'CTRY'])
     df = df[df['LAT'] > min_lat*1000]
     df = df[df['LAT'] < max_lat*1000]
-    # -99999 is code for missing lat/lon
-    df = df[df['LAT'] != -99999]
-    df = df[df['LON'] != -99999]
+    max_possible_lat = 90
+    min_possible_lat = -90
+    max_possible_lon = 180
+    min_possible_lon = -180
+    df = df[df['LAT'] < max_possible_lat]
+    df = df[df['LAT'] > min_possible_lat]
+    df = df[df['LON'] < max_possible_lon]
+    df = df[df['LON'] > min_possible_lon]
     return df
 
 
@@ -88,7 +99,7 @@ def filter_stations():
     station_metadata_file = 'ish-history.csv'
     metadata_df = pd.read_csv(os.path.join(
         metadata_path, station_metadata_file),
-        dtype={'USAF': str, 'WBAN': str})
+        dtype={col: str for col in ['USAF', 'WBAN', 'BEGIN', 'END']})
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
     metadata_df = trim_df_to_useful_latitudes(
         metadata_df, min_lat, max_lat)
