@@ -31,13 +31,17 @@ def download_gsod_yr(yr, save_dir):
     regex_pattern = '\d{6}\D\d{5}\D'+str(yr)+'\.op\.gz'
     data_files_in_dir = get_urls(dir_url, regex_pattern)
     data_files_in_dir = [dir_url+fname for fname in data_files_in_dir]
+    counter = 0
     for dl_url in data_files_in_dir:
+        counter += 1
+        if counter % 1000 == 0:
+            print str(counter) + " files downloaded this year"
         try:
-            download_n_unpack(dl_url, save_dir+str(yr))
+            download_n_unpack(dl_url, os.path.join(save_dir, str(yr)))
         except:
             sleep(15)
             print("Error downloading "+dl_url+", retrying")
-            download_n_unpack(dl_url, save_dir+str(yr))
+            download_n_unpack(dl_url, os.path.join(save_dir, str(yr)))
 
 
 def download_all_of_gsod(save_dir):
