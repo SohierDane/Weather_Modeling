@@ -1,42 +1,45 @@
-
 """
-Downloads the entire GSOD archive. 50+ gb.
+Downloads the entire GSOD archive. 50+ gb, so prepare for a wait.
 """
 
 import os.path
 import urllib
+import gzip
 from get_constants import get_project_constants
 from weather_mod_utilities import get_urls
-
-# http://www1.ncdc.noaa.gov/pub/data/gsod/2014/007026-99999-2014.op.gz
 
 
 def download_n_unpack(url, save_dir):
     file_name = url[url.rfind('/')+1:]
     save_path = os.path.join(save_dir, file_name)
-    #unzip the gz file if needed
-    urllib.urlretrieve(url, save_path)
-    if save_path[-2:] == 'gz':
+    if not os.path.exists(save_path.rstrip('.gz')):
+        urllib.urlretrieve(url, save_path)
         with gzip.open(save_path, 'r') as f:
             data = f.read()
-        with open(save_path[:-2], 'w+') as f:
+        with open(save_path.rstrip('.gz'), 'w+') as f:
             f.write(data)
         os.remove(save_path)
 
 
-def download_gsod_yr(yr):
+def download_gsod_yr(yr, save_dir):
+    if not os.path.isdir(save_dir+str(yr)):
+        os.mkdir(os.path.join(save_dir, str(yr)))
     root_url = 'http://www1.ncdc.noaa.gov/pub/data/gsod/'
     dir_url = root_url+str(yr)+'/'
-    regex_pattern = dir_url+'\d*6-\d*5-\d*4.op.gz'
+    regex_pattern = 'http.*gz'
     data_files_in_dir = get_urls(dir_url, regex_pattern)
+    for dl_url in data_files_in_dir:
+        download_n_unpack(dl_url, save_dir+str(yr))
     return data_files_in_dir
-    
 
-def download_all_of_gsod():
+
+def download_all_of_gsod(save_dir):
     for year in xrange(2016, 1900, -1):
-        download_gsod_yr(year)
+        download_gsod_yr(year, save_dir)
+        print "downloaded "+str(year)
 
 
-#if __name__ == '__main__':
-#    project_constants = get_project_constants()
-#    raw_data_dlpath = project_constants['RAW_MODIS11L2_DATA_PATH']
+if __name__ == '__main__':
+    project_constants = get_project_constants()
+    raw_data_dlpath = project_constants['RAW_GROUND_STATION_DATA_PATH']
+    download_all_of_gsod(raw_data_dlpath)
