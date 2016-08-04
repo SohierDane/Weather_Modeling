@@ -7,6 +7,7 @@ import urllib
 import gzip
 from get_constants import get_project_constants
 from weather_mod_utilities import get_urls
+from time import sleep
 
 
 def download_n_unpack(url, save_dir):
@@ -26,11 +27,16 @@ def download_gsod_yr(yr, save_dir):
         os.mkdir(os.path.join(save_dir, str(yr)))
     root_url = 'http://www1.ncdc.noaa.gov/pub/data/gsod/'
     dir_url = root_url+str(yr)+'/'
-    regex_pattern = 'http.*gz'
+    regex_pattern = '\d{6}\D\d{5}\D'+str(yr)+'\.op\.gz'
     data_files_in_dir = get_urls(dir_url, regex_pattern)
+    data_files_in_dir = [dir_url+fname for fname in data_files_in_dir]
     for dl_url in data_files_in_dir:
-        download_n_unpack(dl_url, save_dir+str(yr))
-    return data_files_in_dir
+        try:
+            download_n_unpack(dl_url, save_dir+str(yr))
+        except:
+            sleep(15)
+            print("Error downloading "+dl_url+", retrying")
+            download_n_unpack(dl_url, save_dir+str(yr))
 
 
 def download_all_of_gsod(save_dir):
@@ -38,8 +44,8 @@ def download_all_of_gsod(save_dir):
         download_gsod_yr(year, save_dir)
         print "downloaded "+str(year)
 
-
-if __name__ == '__main__':
-    project_constants = get_project_constants()
-    raw_data_dlpath = project_constants['RAW_GROUND_STATION_DATA_PATH']
-    download_all_of_gsod(raw_data_dlpath)
+#
+#if __name__ == '__main__':
+#    project_constants = get_project_constants()
+#    raw_data_dlpath = project_constants['RAW_GROUND_STATION_DATA_PATH']
+#    download_all_of_gsod(raw_data_dlpath)
