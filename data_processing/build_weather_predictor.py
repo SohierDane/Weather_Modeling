@@ -1,4 +1,3 @@
-
 """
 Given a weather station metadata file, plus a set of csvs
 """

@@ -21,10 +21,10 @@ def get_active_station_IDs_in_folder(path):
 
 
 def load_metadata(metadata_path):
-    station_metadata_file = 'ish-history.csv'
+    station_metadata_file = 'isd-history.csv'
     metadata_df = pd.read_csv(os.path.join(
         metadata_path, station_metadata_file),
-        dtype={'USAF': str, 'WBAN': str})
+        dtype={col: str for col in ['USAF', 'WBAN', 'BEGIN', 'END']})
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
     metadata_df['LAT'] = metadata_df['LAT']/1000
     metadata_df['LON'] = metadata_df['LON']/1000

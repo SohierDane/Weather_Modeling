@@ -6,6 +6,7 @@ names that are  at the same location.
 import os
 import pandas as pd
 import itertools
+import weather_mod_utilities
 from get_constants import get_project_constants
 
 
@@ -14,8 +15,6 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
     Trim DF to all processed station data files within valid latitudes
     and with enough metadata to use
 
-    Min/max latitudes multiplied by 1000 since gsod metadata
-    units are 1/1000 degree.
 
     Lowest real point on dry land is the border of the dead sea @ 418 M.
     Anything less than that is an invalid entry or a missing/-9999 code.
@@ -23,8 +22,6 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
     elevation_of_lowest_pt_on_dry_land = -418
     df = df[df['ELEV(M)'] >= elevation_of_lowest_pt_on_dry_land]
     df = df.dropna(axis=0, subset=['LAT', 'LON', 'ELEV(M)', 'CTRY'])
-    df = df[df['LAT'] > min_lat*1000]
-    df = df[df['LAT'] < max_lat*1000]
     max_possible_lat = 90
     min_possible_lat = -90
     max_possible_lon = 180
@@ -98,11 +95,7 @@ def filter_stations():
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
     max_lat = project_constants['MAX_LATITUDE']
     min_lat = project_constants['MIN_LATITUDE']
-    station_metadata_file = 'isd-history.csv'
-    metadata_df = pd.read_csv(os.path.join(
-        metadata_path, station_metadata_file),
-        dtype={col: str for col in ['USAF', 'WBAN', 'BEGIN', 'END']})
-    metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
+    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
     metadata_df = trim_df_to_useful_latitudes(
         metadata_df, min_lat, max_lat)
     stns_to_keep = [x+'.csv' for x in metadata_df['ID'].values]
