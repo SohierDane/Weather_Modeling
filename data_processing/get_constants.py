@@ -10,9 +10,12 @@ User will also need to specify the path to the constants.
 '''
 
 import json
-
+import os
 
 def get_project_constants():
-    f_path = '/sat_precip_trmm_3b42/sd_constants/project_constants.json'
+    if '/Users/sohier/Desktop/Weather_Modeling' in os.getcwd():
+        f_path = '/Users/sohier/Desktop/Sample_weather_data/project_constants.json'
+    else:
+        f_path = '/sat_precip_trmm_3b42/sd_constants/project_constants.json'
     project_constants = json.load(open(f_path, 'r'))
     return project_constants

@@ -8,14 +8,7 @@ Each subdirectory in the NASA site is saved as a separate .txt file
 import requests
 import re
 from get_constants import get_project_constants
-
-
-def get_urls(root_url, regex_str):
-    html = requests.get(root_url).text
-    date_re = re.compile(regex_str)
-    url_suffixes = set(date_re.findall(html))
-    url_suffixes = [x.encode('ascii') for x in url_suffixes]
-    return url_suffixes
+from weather_mod_utilities import get_urls
 
 
 def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):

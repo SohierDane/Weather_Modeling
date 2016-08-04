@@ -1,10 +1,11 @@
 """
-Calculates & saves distances between all stations on the same continent
+Calculates & saves distances between all stations in the folder.
+Recommend subsetting the data before running.
 """
 from __future__ import division
 import os
-import pandas as pd
 import numpy as np
+import weather_mod_utilities
 from time import time
 from get_constants import get_project_constants
 
@@ -31,48 +32,56 @@ def calc_table(df):
         for j in xrange(i+1, num_stations):
             counter += 1
             if counter % 10000 == 0:
-                print "processed "+str(counter)+" out of "+str(num_stations**2/2)
+                print "processed "+str(counter)+" out of "+str(int(num_stations**2/2))
             distance = haversine_dist(df.LAT.iloc[i], df.LON.iloc[i],
                                       df.cos_LAT.iloc[i],
                                       df.LAT.iloc[j], df.LON.iloc[j],
                                       df.cos_LAT.iloc[j])
             dists[i, j] = distance
             dists[j, i] = distance
-    print(dists.mean())
     return dists
 
 
-def load_metadata(metadata_path):
-    station_metadata_file = 'ish-history.csv'
-    metadata_df = pd.read_csv(os.path.join(
-        metadata_path, station_metadata_file),
-        dtype={'USAF': str, 'WBAN': str})
-    metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
-    metadata_df['LAT'] = metadata_df['LAT']/1000
-    metadata_df['LON'] = metadata_df['LON']/1000
+def load_metadata_in_radians(metadata_path):
+    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
     metadata_df['LAT'] = metadata_df['LAT'].apply(np.radians)
     metadata_df['LON'] = metadata_df['LON'].apply(np.radians)
     metadata_df['cos_LAT'] = metadata_df['LAT'].apply(np.cos)
     return metadata_df
 
 
-def calc_dist_tables():
-    project_constants = get_project_constants()
-    metadata_path = project_constants['GSOD_METADATA_PATH']
-    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-    active_stations = os.listdir(processed_data_path)
-    end_of_id_idx = active_stations[0].rfind('.')
-    active_stations = set([x[:end_of_id_idx] for x in active_stations])
-    metadata_df = load_metadata(metadata_path)
+def calc_dist_table(metadata_path, processed_data_path):
+    start_time = time()
+    metadata_df = load_metadata_in_radians(metadata_path)
+    active_stations = weather_mod_utilities.get_active_station_IDs_in_folder(
+        processed_data_path)
     metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
-    dist_tables = {'all': calc_table(metadata_df)}
-    for cont, d_table in dist_tables.iteritems():
-        save_path = os.path.join(metadata_path, 'distances_'+cont)
-        np.save(save_path, d_table)
+    distances = calc_table(metadata_df)
+    run_time = time()-start_time
+    print('distance calculations complete in '+str(int(run_time))+' seconds')
+    return distances
+
+
+def get_all_nearest_neighbors(distance_table, k, idx_to_ids, min_distance=10):
+    """
+    Returns the k station ids closest to each station, as long as they
+    are at least min_distance away (to avoid issues with multiple stations
+    at, for example, one large air force base)
+    """
+    neighbors = {id: [] for id in idx_to_ids.values()}
+    num_stations = distance_table.shape[0]
+    for i in num_stations:
+        cur_dists = [(idx_to_ids[j], distance_table[i, j]) for j in num_stations]
+        cur_dists.sort(key=lambda x: x[1])
+        cur_dists = [x for x in cur_dists if x[1] > min_distance]
+        neighbors[i] = cur_dists[:k]
+    return neighbors
 
 
 if __name__ == '__main__':
-    start_time = time()
-    calc_dist_tables()
-    run_time = time()-start_time
-    print('distance calculations complete in '+str(int(run_time))+' seconds')
+    project_constants = get_project_constants()
+    metadata_path = project_constants['GSOD_METADATA_PATH']
+    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
+    d_table = calc_dist_table(metadata_path, processed_data_path)
+    save_path = os.path.join(metadata_path, 'pairwise_distances')
+    np.save(save_path, d_table)
