@@ -24,7 +24,7 @@ def download_n_unpack(url, save_dir):
 
 def download_gsod_yr(yr, save_dir):
     print "now downloading "+str(yr)
-    if not os.path.exists(save_dir+str(yr)):
+    if not os.path.exists(os.path.join(save_dir, str(yr))):
         os.mkdir(os.path.join(save_dir, str(yr)))
     root_url = 'http://www1.ncdc.noaa.gov/pub/data/gsod/'
     dir_url = root_url+str(yr)+'/'
