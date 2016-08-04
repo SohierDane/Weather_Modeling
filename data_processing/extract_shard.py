@@ -11,7 +11,6 @@ from get_constants import get_project_constants
 def get_country_data_shard(country_code):
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
-    metadata_path = os.path.join(metadata_path, 'metadata')
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
     station_metadata_file = 'isd-history.csv'
     metadata_df = pd.read_csv(os.path.join(
@@ -24,7 +23,8 @@ def get_country_data_shard(country_code):
     metadata_df = metadata_df[metadata_df.CTRY == country_code]
     files_to_archive = metadata_df.ID.values
     files_to_archive = [os.path.join(processed_data_path, x+'.csv') for x in files_to_archive]
-    zip_path = os.path.join(metadata_path, country_code+'_shard.zip')
+    save_path = os.path.join(metadata_path, 'metadata')
+    zip_path = os.path.join(save_path, country_code+'_shard.zip')
     zip_path = zip_path.encode('ascii')
     z = zipfile.ZipFile(zip_path, 'w')
     for file in files_to_archive:
