@@ -48,9 +48,8 @@ def get_stations_to_merge(df):
     across pairs.
 
     Does not attemp a name based merge due to low quality
-    of the station name data (see high frequency of names such as
-    'BOGUS FRENCH' or '...'). My personal favorite is 'NAME AND LOC UNKN'
-    which covers 11 stations.
+    of the station name data. See high frequency of names such as
+    'BOGUS FRENCH' or '...' or 'NAME AND LOC UNKN'
 
     Some USAF codes are duplicated due to use as special codes:
     049999 = USAF code for many stations in Greenland

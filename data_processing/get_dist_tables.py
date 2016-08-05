@@ -41,6 +41,17 @@ def calc_table(df):
             dists[j, i] = distance
     return dists
 
+def vectorized_calc_table(df):
+    """
+    Give a dataframe of gsod metadata, returns a numpy array
+    of the pairwise distances between stations.
+    """
+    num_stations = len(df.ID.values)
+    dists = np.zeros([num_stations, num_stations])
+    counter = 0
+    for i in xrange(num_stations):
+        return dists
+
 
 def load_metadata_in_radians(metadata_path):
     metadata_df = weather_mod_utilities.load_metadata(metadata_path)
