@@ -26,8 +26,8 @@ def load_metadata(metadata_path):
         metadata_path, station_metadata_file),
         dtype={col: str for col in ['USAF', 'WBAN', 'BEGIN', 'END']})
     metadata_df['ID'] = metadata_df['USAF']+'-'+metadata_df['WBAN']
-    metadata_df['LAT'] = metadata_df['LAT']/1000
-    metadata_df['LON'] = metadata_df['LON']/1000
+    metadata_df['LAT'] = metadata_df['LAT']
+    metadata_df['LON'] = metadata_df['LON']
     return metadata_df
 
 

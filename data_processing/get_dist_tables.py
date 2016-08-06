@@ -14,8 +14,8 @@ def haversine_dist(lat1, lon1, cos_lat_1, lat2, lon2, cos_lat_2,
                    radius_Earth=6384):
     # expects lat/long in radians
     # default radius of earth is in kilometers
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
+    dlon = abs(lon2 - lon1)
+    dlat = abs(lat2 - lat1)
     a = np.sin(dlat/2)**2 + cos_lat_1 * cos_lat_2 * np.sin(dlon/2)**2
     return 2 * radius_Earth * np.arctan2(np.sqrt(a), np.sqrt(1-a))
 
@@ -80,13 +80,14 @@ def get_all_nearest_neighbors(df, k, min_distance=10):
     """
     num_stations = len(df)
     df.reset_index(inplace=True)
-    df[['neighbor_'+str(j+1) for j in xrange(k)]] = 0
-    df[['dist_to_neighbor_'+str(j+1) for j in xrange(k)]] = 0
+    for j in xrange(k):
+        df['neighbor_'+str(j+1)] = 0
+        df['dist_to_neighbor_'+str(j+1)] = 0
     distance_table = calc_table(df)
     id_idx = 0
     dist_idx = 1
     for i in xrange(len(df)):
-        cur_dists = [(j, distance_table[i]) for j in xrange(num_stations)]
+        cur_dists = [(j, distance_table[i, j]) for j in xrange(num_stations)]
         cur_dists = [x for x in cur_dists if x[1] > min_distance]
         cur_dists.sort(key=lambda x: x[1])
         for j in xrange(k):
