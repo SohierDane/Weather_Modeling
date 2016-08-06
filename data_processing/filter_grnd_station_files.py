@@ -15,7 +15,6 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
     Trim DF to all processed station data files within valid latitudes
     and with enough metadata to use
 
-
     Lowest real point on dry land is the border of the dead sea @ 418 M.
     Anything less than that is an invalid entry or a missing/-9999 code.
     '''

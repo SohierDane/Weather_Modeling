@@ -25,6 +25,7 @@ def calc_table(df):
     Give a dataframe of gsod metadata, returns a numpy array
     of the pairwise distances between stations.
     """
+    df = add_coords_inradians(df)
     num_stations = len(df.ID.values)
     dists = np.zeros([num_stations, num_stations])
     counter = 0
@@ -33,66 +34,85 @@ def calc_table(df):
             counter += 1
             if counter % 10000 == 0:
                 print "processed "+str(counter)+" out of "+str(int(num_stations**2/2))
-            distance = haversine_dist(df.LAT.iloc[i], df.LON.iloc[i],
+            distance = haversine_dist(df['LAT_rads'].iloc[i], df['LON_rads'].iloc[i],
                                       df.cos_LAT.iloc[i],
-                                      df.LAT.iloc[j], df.LON.iloc[j],
+                                      df['LAT_rads'].iloc[j], df['LON_rads'].iloc[j],
                                       df.cos_LAT.iloc[j])
             dists[i, j] = distance
             dists[j, i] = distance
     return dists
 
-def vectorized_calc_table(df):
-    """
-    Give a dataframe of gsod metadata, returns a numpy array
-    of the pairwise distances between stations.
-    """
-    num_stations = len(df.ID.values)
-    dists = np.zeros([num_stations, num_stations])
-    counter = 0
-    for i in xrange(num_stations):
-        return dists
+
+def limit_to_bounding_box(df, coords):
+    min_lat, max_lat, min_lon, max_lon = coords
+    df = df[df['LAT'] < max_lat]
+    df = df[df['LAT'] > min_lat]
+    df = df[df['LON'] < max_lon]
+    df = df[df['LON'] > min_lon]
+    return df
 
 
-def load_metadata_in_radians(metadata_path):
-    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
-    metadata_df['LAT'] = metadata_df['LAT'].apply(np.radians)
-    metadata_df['LON'] = metadata_df['LON'].apply(np.radians)
+def add_coords_inradians(metadata_df):
+    metadata_df['LAT_rads'] = metadata_df['LAT'].apply(np.radians)
+    metadata_df['LON_rads'] = metadata_df['LON'].apply(np.radians)
     metadata_df['cos_LAT'] = metadata_df['LAT'].apply(np.cos)
     return metadata_df
 
 
-def calc_dist_table(metadata_path, processed_data_path):
+def calc_dist_table(metadata_path, processed_data_path, bounds=None):
     start_time = time()
-    metadata_df = load_metadata_in_radians(metadata_path)
     active_stations = weather_mod_utilities.get_active_station_IDs_in_folder(
         processed_data_path)
+    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
     metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
+    if bounds is not None:
+        metadata_df = limit_to_bounding_box(metadata_df, bounds)
     distances = calc_table(metadata_df)
     run_time = time()-start_time
     print('distance calculations complete in '+str(int(run_time))+' seconds')
     return distances
 
 
-def get_all_nearest_neighbors(distance_table, k, idx_to_ids, min_distance=10):
+def get_all_nearest_neighbors(df, k, min_distance=10):
     """
-    Returns the k station ids closest to each station, as long as they
-    are at least min_distance away (to avoid issues with multiple stations
-    at, for example, one large air force base)
+    Returns the k station ids closest to each station as long as they
+    are at least min_distance away.
     """
-    neighbors = {id: [] for id in idx_to_ids.values()}
-    num_stations = distance_table.shape[0]
-    for i in num_stations:
-        cur_dists = [(idx_to_ids[j], distance_table[i, j]) for j in num_stations]
-        cur_dists.sort(key=lambda x: x[1])
+    num_stations = len(df)
+    df.reset_index(inplace=True)
+    df[['neighbor_'+str(j+1) for j in xrange(k)]] = 0
+    df[['dist_to_neighbor_'+str(j+1) for j in xrange(k)]] = 0
+    distance_table = calc_table(df)
+    id_idx = 0
+    dist_idx = 1
+    for i in xrange(len(df)):
+        cur_dists = [(j, distance_table[i]) for j in xrange(num_stations)]
         cur_dists = [x for x in cur_dists if x[1] > min_distance]
-        neighbors[i] = cur_dists[:k]
-    return neighbors
+        cur_dists.sort(key=lambda x: x[1])
+        for j in xrange(k):
+            df['neighbor_'+str(j)].iloc[i] = cur_dists[id_idx]
+            df['dist_to_neighbor_'+str(j)].iloc[i] = cur_dists[dist_idx]
+    return df
+
+
+def run_neighbors_calc(metadata_path, processed_data_path, bounds=None):
+    start_time = time()
+    active_stations = weather_mod_utilities.get_active_station_IDs_in_folder(
+        processed_data_path)
+    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
+    metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
+    if bounds is not None:
+        metadata_df = limit_to_bounding_box(metadata_df, bounds)
+    distances = calc_table(metadata_df)
+    run_time = time()-start_time
+    print('distance calculations complete in '+str(int(run_time))+' seconds')
+    return distances
 
 
 if __name__ == '__main__':
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-    d_table = calc_dist_table(metadata_path, processed_data_path)
-    save_path = os.path.join(metadata_path, 'pairwise_distances')
-    np.save(save_path, d_table)
+    df = run_neighbors_calc(metadata_path, processed_data_path, )
+    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
+    df.to_csv(save_path, index=None)

@@ -19,4 +19,6 @@ if __name__ == "__main__":
     config = get_project_constants()
     metadata_path = config['GSOD_METADATA_PATH']
     processed_data_path = config['PROCESSED_GROUND_STATION_DATA_PATH']
-    distances = calc_dist_table(metadata_path, processed_data_path)
+    # these boundaries define a box in central Asia
+    bounds = [48, 58, 49, 120]
+    df = run_neighbors_calc(metadata_path, processed_data_path, bounds)    
