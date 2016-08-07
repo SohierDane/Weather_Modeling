@@ -8,16 +8,7 @@ import numpy as np
 import weather_mod_utilities
 from time import time
 from get_constants import get_project_constants
-
-
-def haversine_dist(lat1, lon1, cos_lat_1, lat2, lon2, cos_lat_2,
-                   radius_Earth=6384):
-    # expects lat/long in radians
-    # default radius of earth is in kilometers
-    dlon = abs(lon2 - lon1)
-    dlat = abs(lat2 - lat1)
-    a = np.sin(dlat/2)**2 + cos_lat_1 * cos_lat_2 * np.sin(dlon/2)**2
-    return 2 * radius_Earth * np.arctan2(np.sqrt(a), np.sqrt(1-a))
+from geopy.distance import great_circle
 
 
 def calc_table(df):
@@ -25,7 +16,6 @@ def calc_table(df):
     Give a dataframe of gsod metadata, returns a numpy array
     of the pairwise distances between stations.
     """
-    df = add_coords_inradians(df)
     num_stations = len(df.ID.values)
     dists = np.zeros([num_stations, num_stations])
     counter = 0
@@ -34,10 +24,9 @@ def calc_table(df):
             counter += 1
             if counter % 10000 == 0:
                 print "processed "+str(counter)+" out of "+str(int(num_stations**2/2))
-            distance = haversine_dist(df['LAT_rads'].iloc[i], df['LON_rads'].iloc[i],
-                                      df.cos_LAT.iloc[i],
-                                      df['LAT_rads'].iloc[j], df['LON_rads'].iloc[j],
-                                      df.cos_LAT.iloc[j])
+            distance = great_circle(
+                (df['LAT'].iloc[i], df['LON'].iloc[i]),
+                (df['LAT'].iloc[j], df['LON'].iloc[j])).miles
             dists[i, j] = distance
             dists[j, i] = distance
     return dists
@@ -50,13 +39,6 @@ def limit_to_bounding_box(df, coords):
     df = df[df['LON'] < max_lon]
     df = df[df['LON'] > min_lon]
     return df
-
-
-def add_coords_inradians(metadata_df):
-    metadata_df['LAT_rads'] = metadata_df['LAT'].apply(np.radians)
-    metadata_df['LON_rads'] = metadata_df['LON'].apply(np.radians)
-    metadata_df['cos_LAT'] = metadata_df['LAT'].apply(np.cos)
-    return metadata_df
 
 
 def calc_dist_table(metadata_path, processed_data_path, bounds=None):
@@ -81,8 +63,8 @@ def get_all_nearest_neighbors(df, k, min_distance=10):
     num_stations = len(df)
     df.reset_index(inplace=True)
     for j in xrange(k):
-        df['neighbor_'+str(j+1)] = 0
-        df['dist_to_neighbor_'+str(j+1)] = 0
+        df['neighbor_'+str(j)] = 0
+        df['dist_to_neighbor_'+str(j)] = 0
     distance_table = calc_table(df)
     id_idx = 0
     dist_idx = 1
@@ -109,11 +91,11 @@ def run_neighbors_calc(metadata_path, processed_data_path, bounds=None):
     print('distance calculations complete in '+str(int(run_time))+' seconds')
     return distances
 
-
-if __name__ == '__main__':
-    project_constants = get_project_constants()
-    metadata_path = project_constants['GSOD_METADATA_PATH']
-    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-    df = run_neighbors_calc(metadata_path, processed_data_path, )
-    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
-    df.to_csv(save_path, index=None)
+#
+#if __name__ == '__main__':
+#    project_constants = get_project_constants()
+#    metadata_path = project_constants['GSOD_METADATA_PATH']
+#    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
+#    df = run_neighbors_calc(metadata_path, processed_data_path, )
+#    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
+#    df.to_csv(save_path, index=None)
