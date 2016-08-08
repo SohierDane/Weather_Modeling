@@ -73,8 +73,8 @@ def get_all_nearest_neighbors(df, k, min_distance=10):
         cur_dists = [x for x in cur_dists if x[1] > min_distance]
         cur_dists.sort(key=lambda x: x[1])
         for j in xrange(k):
-            df['neighbor_'+str(j)].iloc[i] = cur_dists[id_idx]
-            df['dist_to_neighbor_'+str(j)].iloc[i] = cur_dists[dist_idx]
+            df['neighbor_'+str(j)].iloc[i] = cur_dists[j][id_idx]
+            df['dist_to_neighbor_'+str(j)].iloc[i] = cur_dists[j][dist_idx]
     return df
 
 

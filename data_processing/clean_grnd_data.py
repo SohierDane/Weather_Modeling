@@ -27,12 +27,12 @@ def clean_temp_data(df, stn):
     return df
 
 
-def has_enough_days_complete_day(df):
-    return len(df.dropna()) > 0
+def has_enough_days_complete_day(df, n=1000):
+    return len(df.dropna()) > n
 
 
 def load_station(path):
-        # note that setting dtype to str does not appear to actually work.
+        # note that setting dtype to str does not work consistently.
         df = pd.read_csv(path, dtype=str)
         return df
 
