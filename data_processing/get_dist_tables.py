@@ -32,27 +32,21 @@ def calc_table(df):
     return dists
 
 
-def limit_to_bounding_box(df, coords):
-    min_lat, max_lat, min_lon, max_lon = coords
-    df = df[df['LAT'] < max_lat]
-    df = df[df['LAT'] > min_lat]
-    df = df[df['LON'] < max_lon]
-    df = df[df['LON'] > min_lon]
-    return df
-
-
 def calc_dist_table(metadata_path, processed_data_path, bounds=None):
     start_time = time()
-    active_stations = weather_mod_utilities.get_active_station_IDs_in_folder(
-        processed_data_path)
-    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
-    metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
-    if bounds is not None:
-        metadata_df = limit_to_bounding_box(metadata_df, bounds)
+    metadata_df = (weather_mod_utilities.load_metadata_for_active_stns(metadata_path))
     distances = calc_table(metadata_df)
     run_time = time()-start_time
     print('distance calculations complete in '+str(int(run_time))+' seconds')
     return distances
+
+
+def neighbors_of(stn_ID, df, k, min_distance=10):
+    """
+    Returns only the neighbors of the target station as a sorted list
+    in the format [(stn_id: distance)]
+    """
+    
 
 
 def get_all_nearest_neighbors(df, k, min_distance=10):
@@ -91,11 +85,11 @@ def run_neighbors_calc(metadata_path, processed_data_path, bounds=None):
     print('distance calculations complete in '+str(int(run_time))+' seconds')
     return distances
 
-#
-#if __name__ == '__main__':
-#    project_constants = get_project_constants()
-#    metadata_path = project_constants['GSOD_METADATA_PATH']
-#    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-#    df = run_neighbors_calc(metadata_path, processed_data_path, )
-#    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
-#    df.to_csv(save_path, index=None)
+
+if __name__ == '__main__':
+    project_constants = get_project_constants()
+    metadata_path = project_constants['GSOD_METADATA_PATH']
+    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
+    df = run_neighbors_calc(metadata_path, processed_data_path, )
+    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
+    df.to_csv(save_path, index=None)
