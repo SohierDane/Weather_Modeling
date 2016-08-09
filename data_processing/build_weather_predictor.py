@@ -23,7 +23,7 @@ if __name__ == "__main__":
         metadata_path, country_code='AS')
     Y_stations = df.sample(frac=0.1, random_state=42)
     X_stations = df[~df.ID.isin(Y_stations.ID)]
-    Y_stations = get_neighbor_data(Y_stations, X_stations)
+    Y_stations = get_all_nearest_neighbors(Y_stations, X_stations)
 
     """
     for station in y_stations:
