@@ -5,31 +5,24 @@ Recommend subsetting the data before running.
 from __future__ import division
 import os
 import numpy as np
+import pandas as pd
 import weather_mod_utilities
 from time import time
 from get_constants import get_project_constants
 from geopy.distance import great_circle
+from copy import deepcopy
 
 
-def calc_table(df):
+def calc_table(tgt_coords, metadata_df):
     """
-    Give a dataframe of gsod metadata, returns a numpy array
-    of the pairwise distances between stations.
+    Give a dataframe of gsod metadata and target coordinates,
+    returns a numpy array of the pairwise distances between stations.
     """
-    num_stations = len(df.ID.values)
-    dists = np.zeros([num_stations, num_stations])
-    counter = 0
-    for i in xrange(num_stations-1):
-        for j in xrange(i+1, num_stations):
-            counter += 1
-            if counter % 10000 == 0:
-                print "processed "+str(counter)+" out of "+str(int(num_stations**2/2))
-            distance = great_circle(
-                (df['LAT'].iloc[i], df['LON'].iloc[i]),
-                (df['LAT'].iloc[j], df['LON'].iloc[j])).miles
-            dists[i, j] = distance
-            dists[j, i] = distance
-    return dists
+    df = deepcopy(metadata_df)
+    df.set_index(['ID'])
+    df['coord_pairs'] = df.coords.apply(lambda x: tuple([tgt_coords, x]))
+    df['dists'] = df.coord_pairs.apply(lambda x: great_circle(*x).miles)
+    return df.dists
 
 
 def calc_dist_table(metadata_path, processed_data_path, bounds=None):
@@ -47,8 +40,19 @@ def neighbors_of(stn_ID, df, k, min_distance=10):
     in the format [(stn_id: distance)]
     """
     
+    
+def get_neighbors(Y_df, X_df):
+    """
+    Adds a column to the Y dataframe of the 
+    """
 
+def get_neighbor_data(Y_df, X_df):
+    Y_df = get_neighbors(Y_df, X_df)    
 
+    
+    
+    
+    
 def get_all_nearest_neighbors(df, k, min_distance=10):
     """
     Returns the k station ids closest to each station as long as they
@@ -74,12 +78,7 @@ def get_all_nearest_neighbors(df, k, min_distance=10):
 
 def run_neighbors_calc(metadata_path, processed_data_path, bounds=None):
     start_time = time()
-    active_stations = weather_mod_utilities.get_active_station_IDs_in_folder(
-        processed_data_path)
-    metadata_df = weather_mod_utilities.load_metadata(metadata_path)
-    metadata_df = metadata_df[metadata_df.ID.isin(active_stations)]
-    if bounds is not None:
-        metadata_df = limit_to_bounding_box(metadata_df, bounds)
+    metadata_df = weather_mod_utilities.load_metadata_for_active_stns(metadata_path)
     distances = calc_table(metadata_df)
     run_time = time()-start_time
     print('distance calculations complete in '+str(int(run_time))+' seconds')
@@ -90,6 +89,9 @@ if __name__ == '__main__':
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-    df = run_neighbors_calc(metadata_path, processed_data_path, )
-    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
-    df.to_csv(save_path, index=None)
+    df = weather_mod_utilities.load_metadata(metadata_path)
+    df = df.sample(n=100)
+    dists = calc_table(df)
+#    df = run_neighbors_calc(metadata_path, processed_data_path, )
+#    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
+#    df.to_csv(save_path, index=None)
