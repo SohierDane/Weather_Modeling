@@ -1,34 +1,28 @@
 """
 
 """
-
 from __future__ import division
 import pandas as pd
-import numpy as np
-import os
-import weather_mod_utilities
-import get_dist_tables
+from build_base_table import prep_analytics_base_table
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.cross_validation import train_test_split
 from sklearn.pipeline import Pipeline
-from time import time
-from get_constants import get_project_constants
+from sklearn.metrics import f1_score, accuracy_score, precision_score, \
+    recall_score
 
+
+def run_model(Model, X_train, X_test, y_train, y_test):
+    m = Model()
+    m.fit(X_train, y_train)
+    y_predict = m.predict(X_test)
+    return (accuracy_score(y_test, y_predict),
+            f1_score(y_test, y_predict),
+            precision_score(y_test, y_predict),
+            recall_score(y_test, y_predict))
 
 if __name__ == "__main__":
-    config = get_project_constants()
-    metadata_path = config['GSOD_METADATA_PATH']
-    processed_data_path = config['PROCESSED_GROUND_STATION_DATA_PATH']
-    df = weather_mod_utilities.load_metadata_for_active_stns(
-        metadata_path, country_code='AS')
-    Y_stations = df.sample(frac=0.1, random_state=42)
-    X_stations = df[~df.ID.isin(Y_stations.ID)]
-    Y_stations = get_all_nearest_neighbors(Y_stations, X_stations)
-
-    """
-    for station in y_stations:
-        append weather data from all days where all nearest neighbors have data
-        to a central dataframe
-    test_train split on central dataframe
-    model central dataframe
-    """
+    k = 5
+    abt = prep_analytics_base_table(5)
+    Y = abt.pop('Temp_Y')
+    X = abt
+    X_train, X_test, y_train, y_test = train_test_split(abt)

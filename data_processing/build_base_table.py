@@ -6,7 +6,6 @@ use a O(N^2) implementation.
 """
 from __future__ import division
 import os
-import numpy as np
 import pandas as pd
 import weather_mod_utilities
 from time import time
@@ -88,8 +87,11 @@ def unpack_all_daily_data(meta_df, processed_data_path, k):
     return pd.concat(daily_data)
 
 
-def prep_analytics_base_table(metadata_path, processed_data_path, k):
+def prep_analytics_base_table(k):
     start_time = time()
+    project_constants = get_project_constants()
+    metadata_path = project_constants['GSOD_METADATA_PATH']
+    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
     meta_df = weather_mod_utilities.load_metadata(metadata_path)
     meta_df = meta_df[meta_df.ID.isin(weather_mod_utilities.
                       get_active_station_IDs_in_folder(processed_data_path))]
@@ -102,14 +104,10 @@ def prep_analytics_base_table(metadata_path, processed_data_path, k):
     analytics_base_table.reset_index(inplace=True)
     del analytics_base_table['Date']
     del analytics_base_table['Y_ID']
-    print("Analytics base table loaded after "+str(
-        int(time()-got_neighbors_time))+" seconds")
+    print("Analytics base table loaded")
     return analytics_base_table
 
 
 if __name__ == '__main__':
-    project_constants = get_project_constants()
-    metadata_path = project_constants['GSOD_METADATA_PATH']
-    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
     k = 5
-    abt = prep_analytics_base_table(metadata_path, processed_data_path, k)
+    abt = prep_analytics_base_table(k)
