@@ -32,37 +32,84 @@ def get_all_nearest_neighbors(Y_df, X_stations, k, min_distance=10):
     X_df = deepcopy(X_stations)
     X_df.set_index(['ID'], inplace=True)
     new_cols = Y_df.coords.apply(
-        lambda x: get_nearest_neighbors(x, X_df, 5, 10))
+        lambda x: get_nearest_neighbors(x, X_df, k, min_distance))
     for i in range(k):
         Y_df['neighbor_'+str(i)] = new_cols.apply(lambda x: x[i])
         Y_df['neighbor_dist_'+str(i)] = new_cols.apply(lambda x: x[i+k])
-        Y_df['evel_diff'+str(i)] = Y_df['neighbor_'+str(i)].apply(
+        Y_df['elev_diff_'+str(i)] = Y_df['neighbor_'+str(i)].apply(
             lambda x: X_df['ELEV(M)'].loc[x])
-        Y_df['evel_diff'+str(i)] = Y_df['evel_diff'+str(i)] - Y_df['ELEV(M)']
-        Y_df['neighbor_lat'+str(i)] = Y_df['neighbor_'+str(i)].apply(
+        Y_df['elev_diff_'+str(i)] = Y_df['elev_diff_'+str(i)] - Y_df['ELEV(M)']
+        Y_df['neighbor_lat_'+str(i)] = Y_df['neighbor_'+str(i)].apply(
             lambda x: X_df['LAT'].loc[x])
     return Y_df
 
 
-def unpack_daily_data(Y_ID, neighbor_IDs, processed_data_path):
-    Y_path = os.path.join(processed_data_path, Y_ID)+'.csv'
-    Y_data = pd.read_csv(Y_path)[['Date', 'Temp']]
-    X_data = []
-    for ID in neighbor_IDs:
-        X_path = os.path.join(processed_data_path, ID)+'.csv'
-        X_data.append(pd.read_csv(X_path)[['Date', 'Temp']])
-    
+def load_station_data(station_ID, processed_data_path):
+    cur_path = os.path.join(processed_data_path, station_ID)+'.csv'
+    df = pd.read_csv(cur_path, parse_dates=[0], infer_datetime_format=True)
+    df.set_index('Date', inplace=True)
+    return pd.DataFrame(df['Temp'])
 
 
+def unpack_stations_daily_data(Y_ID, neighbor_IDs, processed_data_path):
+    """
+    Loads the daily data for one Y station and its nearest neighbors.
 
-#if __name__ == '__main__':
-#    project_constants = get_project_constants()
-#    metadata_path = project_constants['GSOD_METADATA_PATH']
-#    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
-#    df = weather_mod_utilities.load_metadata(metadata_path)
-#    df = df.sample(n=1000)
-#    Y_stations = df.sample(frac=0.1, random_state=42)
-#    X_stations = df[~df.ID.isin(Y_stations.ID)]
-#    df = run_neighbors_calc(metadata_path, processed_data_path, )
-#    save_path = os.path.join(metadata_path, 'isd-with-neighbors')
-#    df.to_csv(save_path, index=None)
+    Only retains days where all stations have reported data.
+    """
+    Y_df = load_station_data(Y_ID, processed_data_path)
+    Y_df.rename(columns={'Temp': 'Temp_Y'}, inplace=True)
+    Y_df['Y_ID'] = Y_ID
+    data = []
+    for i, ID in enumerate(neighbor_IDs):
+        X_station = load_station_data(ID, processed_data_path)
+        X_station.rename(columns={'Temp': 'Temp_'+str(i)}, inplace=True)
+        data.append(X_station)
+    for X_df in data:
+        Y_df = Y_df.merge(X_df, left_index=True, right_index=True)
+    return Y_df
+
+
+def unpack_all_daily_data(meta_df, processed_data_path, k):
+    meta_df.set_index('ID', inplace=True)
+    meta_columns_to_add_to_daily = []
+    for i in xrange(k):
+        meta_columns_to_add_to_daily.append('neighbor_lat_'+str(i))
+        meta_columns_to_add_to_daily.append('neighbor_dist_'+str(i))
+        meta_columns_to_add_to_daily.append('elev_diff_'+str(i))
+
+    daily_data = []
+    for Y_ID in meta_df.index:
+        neighbors = meta_df[['neighbor_'+str(i) for i in xrange(k)]].loc[Y_ID].values
+        cur_data = unpack_stations_daily_data(Y_ID, neighbors, processed_data_path)
+        for col in meta_columns_to_add_to_daily:
+            cur_data[col] = meta_df[col].loc[Y_ID]
+        daily_data.append(cur_data)
+    return pd.concat(daily_data)
+
+
+def prep_analytics_base_table(metadata_path, processed_data_path, k):
+    start_time = time()
+    meta_df = weather_mod_utilities.load_metadata(metadata_path)
+    meta_df = meta_df[meta_df.ID.isin(weather_mod_utilities.
+                      get_active_station_IDs_in_folder(processed_data_path))]
+    Y_stations = meta_df.sample(frac=0.1, random_state=42)
+    X_stations = meta_df[~meta_df.ID.isin(Y_stations.ID)]
+    meta_df = get_all_nearest_neighbors(Y_stations, X_stations, k)
+    got_neighbors_time = int(time()-start_time)
+    print("Got nearest neighbors after "+str(got_neighbors_time))+" seconds"
+    analytics_base_table = unpack_all_daily_data(meta_df, processed_data_path, k)
+    analytics_base_table.reset_index(inplace=True)
+    del analytics_base_table['Date']
+    del analytics_base_table['Y_ID']
+    print("Analytics base table loaded after "+str(
+        int(time()-got_neighbors_time))+" seconds")
+    return analytics_base_table
+
+
+if __name__ == '__main__':
+    project_constants = get_project_constants()
+    metadata_path = project_constants['GSOD_METADATA_PATH']
+    processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
+    k = 5
+    abt = prep_analytics_base_table(metadata_path, processed_data_path, k)
