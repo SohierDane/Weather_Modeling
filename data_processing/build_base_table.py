@@ -1,6 +1,8 @@
 """
 Calculates & saves distances between all stations in the folder.
-Recommend subsetting the data before running.
+
+Recommend subsetting the data before running as the pairwise distances
+use a O(N^2) implementation.
 """
 from __future__ import division
 import os
@@ -40,6 +42,17 @@ def get_all_nearest_neighbors(Y_df, X_stations, k, min_distance=10):
         Y_df['neighbor_lat'+str(i)] = Y_df['neighbor_'+str(i)].apply(
             lambda x: X_df['LAT'].loc[x])
     return Y_df
+
+
+def unpack_daily_data(Y_ID, neighbor_IDs, processed_data_path):
+    Y_path = os.path.join(processed_data_path, Y_ID)+'.csv'
+    Y_data = pd.read_csv(Y_path)[['Date', 'Temp']]
+    X_data = []
+    for ID in neighbor_IDs:
+        X_path = os.path.join(processed_data_path, ID)+'.csv'
+        X_data.append(pd.read_csv(X_path)[['Date', 'Temp']])
+    
+
 
 
 #if __name__ == '__main__':

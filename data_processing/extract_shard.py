@@ -34,5 +34,5 @@ def get_country_data_shard(country_code):
 
 
 if __name__ == '__main__':
-    get_country_data_shard('ZA')
+    get_country_data_shard('AS')
     print('archiving complete')

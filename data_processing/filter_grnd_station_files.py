@@ -16,7 +16,8 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
     and with enough metadata to use
 
     Lowest real point on dry land is the border of the dead sea @ 418 M.
-    Anything less than that is an invalid entry or a missing/-9999 code.
+    https://en.wikipedia.org/wiki/Extreme_points_of_Earth#Lowest_point_.28natural.29
+    Anything less than that is an invalid entry.
     '''
     elevation_of_lowest_pt_on_dry_land = -418
     df = df[df['ELEV(M)'] >= elevation_of_lowest_pt_on_dry_land]
