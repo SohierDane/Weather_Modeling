@@ -87,7 +87,7 @@ def unpack_all_daily_data(meta_df, processed_data_path, k):
     return pd.concat(daily_data)
 
 
-def prep_analytics_base_table(k):
+def prep_analytics_base_table(k, min_distance=10):
     start_time = time()
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
@@ -97,7 +97,7 @@ def prep_analytics_base_table(k):
                       get_active_station_IDs_in_folder(processed_data_path))]
     Y_stations = meta_df.sample(frac=0.1, random_state=42)
     X_stations = meta_df[~meta_df.ID.isin(Y_stations.ID)]
-    meta_df = get_all_nearest_neighbors(Y_stations, X_stations, k)
+    meta_df = get_all_nearest_neighbors(Y_stations, X_stations, k, min_distance)
     got_neighbors_time = int(time()-start_time)
     print("Got nearest neighbors after "+str(got_neighbors_time))+" seconds"
     analytics_base_table = unpack_all_daily_data(meta_df, processed_data_path, k)
