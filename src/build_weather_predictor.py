@@ -3,13 +3,11 @@ Generates, cross validates, and compares several candidate regression models.
 """
 
 from __future__ import division
-import numpy as np
 from build_base_table import prep_analytics_base_table
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import AdaBoostRegressor
-from sklearn.kernel_ridge import KernelRidge
 from sklearn.cross_validation import train_test_split
 from sklearn.grid_search import GridSearchCV
 

@@ -28,6 +28,10 @@ def get_nearest_neighbors(tgt_coords, metadata_df, k, min_distance=10):
 
 
 def get_all_nearest_neighbors(Y_df, X_stations, k, min_distance=10):
+    """
+    Add columns detailing relationship between each station in Y_df
+    its nearest neighbors.
+    """
     X_df = deepcopy(X_stations)
     X_df.set_index(['ID'], inplace=True)
     new_cols = Y_df.coords.apply(
@@ -99,7 +103,7 @@ def prep_analytics_base_table(k, min_distance=10):
     X_stations = meta_df[~meta_df.ID.isin(Y_stations.ID)]
     meta_df = get_all_nearest_neighbors(Y_stations, X_stations, k, min_distance)
     got_neighbors_time = int(time()-start_time)
-    print("Got nearest neighbors after "+str(got_neighbors_time))+" seconds"
+    print("Got nearest neighbors after "+str(got_neighbors_time)+" seconds")
     analytics_base_table = unpack_all_daily_data(meta_df, processed_data_path, k)
     analytics_base_table.reset_index(inplace=True)
     del analytics_base_table['Date']
