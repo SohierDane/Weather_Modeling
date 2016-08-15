@@ -22,18 +22,18 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X, Y)
 
     models = dict()
-    models['linear'] = LinearRegression(n_jobs=-1)
-    models['rand_forest'] = GridSearchCV(RandomForestRegressor(n_jobs=-1), cv=5,
+    models['Linear Regression'] = LinearRegression(n_jobs=-1)
+    models['Random Forest'] = GridSearchCV(RandomForestRegressor(n_jobs=-1), cv=5,
                                          param_grid={"max_depth": [3, 4, 5]})
-    models['krr'] = GridSearchCV(KernelRidge(kernel='rbf', gamma=0.1), cv=5,
-                                 param_grid={"alpha": [1e0, 0.1, 1e-2, 1e-3],
-                                 "gamma": np.logspace(-2, 2, 5)})
-    models['ada'] = GridSearchCV(AdaBoostRegressor(), cv=5, param_grid={
+#    models['Kernel Ridge Regression'] = GridSearchCV(KernelRidge(kernel='rbf', gamma=0.1), cv=5,
+#                                 param_grid={"alpha": [1e0, 0.1, 1e-2, 1e-3],
+#                                 "gamma": np.logspace(-2, 2, 5)})
+    models['Ada Boost'] = GridSearchCV(AdaBoostRegressor(), cv=5, param_grid={
                                  "n_estimators": [40, 60, 80], "learning_rate":
                                  [0.5, 1]})
-    models['grad_boost'] = GridSearchCV(GradientBoostingRegressor(), cv=5, param_grid={
+    models['Gradient Boost'] = GridSearchCV(GradientBoostingRegressor(), cv=5, param_grid={
                                  "n_estimators": [40, 60, 80], "learning_rate":
                                  [0.5, 1]})
-    for key, model in models.iteritems():
+    for model_nm, model in models.iteritems():
         model.fit(X_train, y_train)
-        print key+" scored "+str(model.score(X_test, y_test))
+        print model_nm+" scored "+str(model.score(X_test, y_test))
