@@ -1,10 +1,11 @@
-'''
-Downloads all hdf and xml files for the MODIS11L2 product over
-a specified range of dates and specified times of day.
+"""
+Downloads all files for the MODIS11L2 data product over
+a specified range of dates and specified times of day. The
+online NOAA tools do not currently support filtering by time of day.
 
 Please note that this is ~4 terabytes of data, if all times of day
 are included.
-'''
+"""
 
 import os.path
 import pycurl
@@ -14,11 +15,11 @@ from get_constants import get_project_constants
 
 
 def execute_download(url, output_path, ftp_upass, cookie_path):
-    '''
+    """
     Downloads file via curl command that functions with NASA's ftp.
     Derived from documentation here:
     https://lpdaac.usgs.gov/sites/default/files/public/get_data/docs/Command%20Line%20Access%20Tips%20for%20Utilizing%20Earthdata%20Login.docx
-    '''
+    """
     # exit early if file already exists.
     if os.path.isfile(output_path):
         return None
@@ -41,9 +42,9 @@ def execute_download(url, output_path, ftp_upass, cookie_path):
 
 
 def download_one_datetime(url, time, raw_data_dlpath, ftp_upass, cookie_path):
-    '''
+    """
     If the modis file does not already exist, downloads hdf,jpg, and xml
-    '''
+    """
     idx_date_start = 45
     idx_date_end = 55
     idx_browse_start = 57
@@ -58,9 +59,9 @@ def download_one_datetime(url, time, raw_data_dlpath, ftp_upass, cookie_path):
 
 def download_time_for_all_dates(time, raw_data_dlpath, metadata_path,
                                 ftp_upass, cookie_path):
-    '''
+    """
     Loop through every file in ftp_urls and download the correct time.
-    '''
+    """
     idx_start_of_time = 75
     idx_end_of_time = 79
     ftp_url_files_path = metadata_path+'/ftp_urls/'

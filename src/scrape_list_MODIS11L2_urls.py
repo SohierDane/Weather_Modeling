@@ -5,13 +5,14 @@ download the MODIS11_L2 data.
 Each subdirectory in the NASA site is saved as a separate .txt file
 '''
 
-import requests
-import re
 from get_constants import get_project_constants
 from weather_mod_utilities import get_urls
 
 
 def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
+    """
+    Saves a list of modis files available in this directory of the ftp server
+    """
     dir_root_url = ftp_root_url+dir_suffix+'/'
     cur_suffixes = get_urls(dir_root_url, 'MOD11_L2.A[a-zA-Z0-9\.]*\.hdf')
     modis_urls = ['/'.join([dir_root_url, x]) for x in cur_suffixes]
@@ -23,7 +24,10 @@ def download_urls_in_subdir(dir_suffix, ftp_root_url, metadata_dlpath):
         f_open.truncate()
 
 
-if __name__ == "__main__":
+def get_all_MODIS_urls():
+    """
+    Save lists of all modis files available for the project years.
+    """
     project_constants = get_project_constants()
     first_yr = project_constants['FIRST_YR']
     last_yr = project_constants['LAST_YR']
@@ -37,3 +41,7 @@ if __name__ == "__main__":
     for subdir in subdir_suffixes:
         download_urls_in_subdir(subdir, ftp_root_url, metadata_dlpath)
     print("MODIS urls downloaded")
+
+
+if __name__ == "__main__":
+    get_all_MODIS_urls()

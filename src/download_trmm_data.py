@@ -13,6 +13,9 @@ from get_constants import get_project_constants
 
 
 def download_trmm(mirador_dat_url, output_dir):
+    """
+    Downloads all TRMM3B42 data in the specified years.
+    """
     # mirador dat website is a list of the actual file urls
     mirador_dat = requests.get(mirador_dat_url)
     mirador_dat = mirador_dat.text.strip().split('\n')

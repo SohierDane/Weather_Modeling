@@ -11,6 +11,10 @@ from get_constants import get_project_constants
 
 
 def get_active_station_IDs_in_folder(path):
+    """
+    List all files in directory. Assumes nothing has been added
+    to the directory except for gsod downloads.
+    """
     active_stations = os.listdir(path)
     # handling in case directory was extracted from a zip
     if '.DS_Store' in active_stations:
@@ -21,6 +25,9 @@ def get_active_station_IDs_in_folder(path):
 
 
 def limit_to_bounding_box(df, coords):
+    """
+    Drop rows with coordinates outside of the bounding box.
+    """
     min_lat, max_lat, min_lon, max_lon = coords
     df = df[df['LAT'] < max_lat]
     df = df[df['LAT'] > min_lat]
@@ -30,6 +37,10 @@ def limit_to_bounding_box(df, coords):
 
 
 def load_metadata(metadata_path):
+    """
+    Load the gsod metadata. Assumes the file hasn't been altered
+    from its format on the NOAA ftp server.
+    """
     station_metadata_file = 'isd-history.csv'
     metadata_df = pd.read_csv(os.path.join(
         metadata_path, station_metadata_file),
@@ -42,6 +53,10 @@ def load_metadata(metadata_path):
 
 def load_metadata_for_active_stns(metadata_path,
                                   bounds=None, country_code=None):
+    """
+    Load gsod metadata for only active stations, with optional
+    additional filters.
+    """
     active_stations = get_active_station_IDs_in_folder(
         processed_data_path)
     metadata_df = load_metadata(metadata_path)
@@ -54,6 +69,10 @@ def load_metadata_for_active_stns(metadata_path,
 
 
 def get_urls(root_url, regex_str):
+    """
+    Scrape all regex matches from a web page. Used to extract data from NOAA
+    servers since their html structure isn't amenable to beautiful soup.
+    """
     html = requests.get(root_url).text
     date_re = re.compile(regex_str)
     url_suffixes = set(date_re.findall(html))

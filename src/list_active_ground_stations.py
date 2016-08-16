@@ -5,6 +5,7 @@ specified years. Does not check for data completeness within the year.
 Expects file names in the format of: 165970-99999-2002.op
 With format: USAF ID-WBAN ID-year
 '''
+
 import os
 import pandas as pd
 from calendar import isleap
@@ -13,6 +14,8 @@ from get_constants import get_project_constants
 
 def count_station_days_data(USAF, WBAN, raw_data_path, year):
     '''
+    TODO: Complete function.
+
     Given a station's USAF and WBAN ID codes, returns data on the station's
     activity.
 
@@ -36,29 +39,39 @@ def count_station_days_data(USAF, WBAN, raw_data_path, year):
     # add separate field for 'all 4 present
 
 
-def get_station_nms_in_yr(path):
+def get_station_IDs_in_yr(path):
+    """
+    Extract the ID code from its file path
+    """
     stn_names = [x.split('-') for x in os.listdir(path)]
     stn_names = [(x[0], x[1]) for x in stn_names]
     return set(stn_names)
 
 
-def get_names_in_yrs(first_yr, last_yr, top_GSOD_dir):
+def get_IDs_in_yrs(first_yr, last_yr, top_GSOD_dir):
+    """
+    Check what stations exist in the specified years
+    """
     yrs_to_check = [str(i) for i in range(int(first_yr), int(last_yr)+1)]
     all_active_stations = set()
     for folder in os.listdir(top_GSOD_dir):
         if folder in yrs_to_check:
             folder_path = os.path.join(top_GSOD_dir, folder)
-            cur_stations = get_station_nms_in_yr(folder_path)
+            cur_stations = get_station_IDs_in_yr(folder_path)
             all_active_stations = all_active_stations.union(cur_stations)
     return all_active_stations
 
 
 def list_active_stations():
+    """
+    Create a file listing all stations that actually exist in the
+    raw data folder in the project years.
+    """
     project_constants = get_project_constants()
     first_yr = project_constants['FIRST_YR']
     last_yr = project_constants['LAST_YR']
     raw_data_path = project_constants['RAW_GROUND_STATION_DATA_PATH']
-    nms = get_names_in_yrs(first_yr, last_yr, raw_data_path)
+    nms = get_IDs_in_yrs(first_yr, last_yr, raw_data_path)
     station_ids = set([(x[0], x[1]) for x in nms])
     metadata_path = project_constants['GSOD_METADATA_PATH']
     file_name = 'station_codes_active_{0}_to_{1}.txt'.format(first_yr, last_yr)

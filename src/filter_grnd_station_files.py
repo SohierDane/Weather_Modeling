@@ -34,6 +34,9 @@ def trim_df_to_useful_latitudes(df, min_lat, max_lat):
 
 
 def delete_stations_not_in_list(safelist, tgt_dir):
+    """
+    Deletes all station files that aren't in the safelist.
+    """
     stations_in_dir = pd.Series(os.listdir(tgt_dir))
     stns_to_drop = stations_in_dir[
                 stations_in_dir.apply(lambda x: x not in safelist)]
@@ -89,6 +92,11 @@ def merge_stations(stn_pairs, processed_data_path):
 
 
 def filter_stations():
+    """
+    Deletes ground stations outside of the acceptable latitudes or
+    without adequate lat/lon information. Merges stations @ with different
+    names that are  at the same location.
+    """
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']

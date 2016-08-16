@@ -11,6 +11,9 @@ from time import sleep
 
 
 def download_n_unpack(url, save_dir):
+    """
+    Downloads and unzips a single station's data.
+    """
     file_name = url[url.rfind('/')+1:]
     save_path = os.path.join(save_dir, file_name)
     if not os.path.exists(save_path.rstrip('.gz')):
@@ -23,6 +26,9 @@ def download_n_unpack(url, save_dir):
 
 
 def download_gsod_yr(yr, save_dir):
+    """
+    Downloads all .op.gz files in the specified year.
+    """
     print "now downloading "+str(yr)
     if not os.path.exists(os.path.join(save_dir, str(yr))):
         os.mkdir(os.path.join(save_dir, str(yr)))
@@ -45,6 +51,9 @@ def download_gsod_yr(yr, save_dir):
 
 
 def download_all_of_gsod(save_dir):
+    """
+    Downloads all gsod files in the specified date range.
+    """
     for year in xrange(2016, 1900, -1):
         download_gsod_yr(year, save_dir)
         print "downloaded "+str(year)

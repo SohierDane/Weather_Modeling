@@ -12,7 +12,12 @@ User will also need to specify the path to the constants.
 import json
 import os
 
+
 def get_project_constants():
+    """
+    Loads the project_constants.json, which contains a user login and password
+    and so should not be kept in the git repo.
+    """
     if '/Users/sohier/Desktop/Weather_Modeling' in os.getcwd():
         f_path = '/Users/sohier/Desktop/Sample_weather_data/project_constants.json'
     else:

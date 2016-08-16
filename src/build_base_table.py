@@ -4,6 +4,7 @@ Calculates & saves distances between all stations in the folder.
 Recommend subsetting the data before running as the pairwise distances
 use a O(N^2) implementation.
 """
+
 from __future__ import division
 import os
 import pandas as pd
@@ -48,6 +49,9 @@ def get_all_nearest_neighbors(Y_df, X_stations, k, min_distance=10):
 
 
 def load_station_data(station_ID, processed_data_path):
+    """
+    Loads the date & mean temperature data for a station
+    """
     cur_path = os.path.join(processed_data_path, station_ID)+'.csv'
     df = pd.read_csv(cur_path, parse_dates=[0], infer_datetime_format=True)
     df.set_index('Date', inplace=True)
@@ -74,6 +78,9 @@ def unpack_stations_daily_data(Y_ID, neighbor_IDs, processed_data_path):
 
 
 def unpack_all_daily_data(meta_df, processed_data_path, k):
+    """
+    Adds nearest neighbor metrics to the metadata
+    """
     meta_df.set_index('ID', inplace=True)
     meta_columns_to_add_to_daily = []
     for i in xrange(k):
@@ -92,6 +99,14 @@ def unpack_all_daily_data(meta_df, processed_data_path, k):
 
 
 def prep_analytics_base_table(k, min_distance=10):
+    """
+    Generates an analytics base table with data on the K nearest neighbors
+    of each Y station. Includes option to exclude stations closer than
+    a minimum distance to model sparse data.
+
+    Min_distance should stay above 10 to weather stations that are actually
+    at the same airport.
+    """
     start_time = time()
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']

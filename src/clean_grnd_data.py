@@ -28,16 +28,27 @@ def clean_temp_data(df, stn):
 
 
 def has_enough_days_complete_day(df, n=1000):
+    """
+    Identifies stations with too little data to be of use
+    """
     return len(df.dropna()) > n
 
 
 def load_station(path):
-        # note that setting dtype to str does not work consistently.
+        """
+        Reads the station data csv into a dataframe. dtype=str is necessary
+        to avoid dropping leading zeros in some columns such as the WBAN ID.
+
+        Note that setting dtype to str does not seem to work consistently.
+        """
         df = pd.read_csv(path, dtype=str)
         return df
 
 
 def clean_all_stations():
+    """
+    Cleans all of the station files found in the processed data folder
+    """
     project_constants = get_project_constants()
     metadata_path = project_constants['GSOD_METADATA_PATH']
     processed_data_path = project_constants['PROCESSED_GROUND_STATION_DATA_PATH']
