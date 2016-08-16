@@ -106,8 +106,8 @@ def prep_analytics_base_table(k, min_distance=10):
     of each Y station. Includes option to exclude stations closer than
     a minimum distance to model sparse data.
 
-    Min_distance should stay above 10 to weather stations that are actually
-    at the same airport.
+    Min_distance should stay above 10 to avoid treating
+    weather stations that are actually at the same airport as neighbors.
     """
     start_time = time()
     project_constants = get_project_constants()
@@ -132,5 +132,6 @@ def prep_analytics_base_table(k, min_distance=10):
 
 
 if __name__ == '__main__':
+    # k is the number of neighbors, could grid search to optimize this value
     k = 5
     abt = prep_analytics_base_table(k)
