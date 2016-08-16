@@ -2,7 +2,7 @@
 
 ##Status:
 This project is on hold until NOAA fixes the Global Summary of the Day (GSOD)
-dataset. It is currently missing nearly all of the data listed in the data
+dataset. It is currently missing nearly all of the data listed in NOAA's data
 inventory for the regions of interest. NOAA has been notified of the issue.
 
 ##Motivation:
@@ -10,10 +10,16 @@ To model malaria, you need good data on rainfall and temperature as mosquitoes
 breed in standing water and temperature influences the rate at which the
 parasite matures. However, there are very few ground based weather stations
 in the equatorial African nations which suffer the greatest malaria burden.
+NOAA is using
+machine learning to improve the accuracy of [other weather datasets](https://pmm.nasa.gov/sites/default/files/document_files/IMERG_FinalRun_Day1_release_notes.pdf)
+, but will not update historic data for some time yet.
 The goal of this project is to use machine learning to extrapolate between
-weather stations separated by unusually long distances.
+weather stations separated by unusually long distances.  
 
 ##Data Understanding
+
+
+
 
 ##Data Preparation
 NOAA provides the GSOD data in a proprietary index delimited text file format.
@@ -22,7 +28,7 @@ It requires extensive reprocessing before it can be used, including:
   * Unpacking columns that contain multiple data points, such as mean
   temperature and the number of hours in the average, into separate columns.
   * Adding machine readable missing data codes to replace hand written entries
-  such as "name unknown" or "9999"
+  such as "name unknown" or "9999".
 
 ##Modeling
 
