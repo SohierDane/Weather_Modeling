@@ -2,7 +2,7 @@
 Calculates & saves distances between all stations in the folder.
 
 Recommend subsetting the data before running as the pairwise distances
-use a O(N^2) implementation.
+use a simple O(N^2) implementation.
 """
 
 from __future__ import division
@@ -125,7 +125,9 @@ def prep_analytics_base_table(k, min_distance=10):
     analytics_base_table.reset_index(inplace=True)
     del analytics_base_table['Date']
     del analytics_base_table['Y_ID']
-    print("Analytics base table loaded")
+    abt_done_time = int(time()-start_time)
+    print("Analytics base table loaded after {0} seconds").format(
+        abt_done_time)
     return analytics_base_table
 
 

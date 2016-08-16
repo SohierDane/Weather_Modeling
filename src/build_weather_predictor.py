@@ -25,13 +25,13 @@ def load_candidate_models():
     """
     models = dict()
     models['Linear Regression'] = LinearRegression(n_jobs=-1)
-#    models['Lasso Regression'] = LassoCV(n_jobs=-1, cv=5)
-#    models['Random Forest'] = GridSearchCV(
-#        RandomForestRegressor(n_jobs=-1), cv=5,
-#        param_grid={"max_depth": [3, 5]})
-#    models['Ada Boost'] = GridSearchCV(
-#        AdaBoostRegressor(), cv=5, param_grid={
-#            "loss": ['linear', 'square'], "learning_rate": [0.5, 1]})
+    models['Lasso Regression'] = LassoCV(n_jobs=-1, cv=5)
+    models['Random Forest'] = GridSearchCV(
+        RandomForestRegressor(n_jobs=-1), cv=5,
+        param_grid={"max_depth": [3, 5]})
+    models['Ada Boost'] = GridSearchCV(
+        AdaBoostRegressor(), cv=5, param_grid={
+            "loss": ['linear', 'square'], "learning_rate": [0.05, 0.1]})
     models['Gradient Boost'] = GridSearchCV(
         GradientBoostingRegressor(), cv=5, param_grid={
             "max_depth": [4, 5], "learning_rate": [0.05, 0.1, 0.5]})
