@@ -36,11 +36,12 @@ It requires extensive reprocessing before it can be used, including:
 
 
 ##Next Steps
-Once NOAA has released GSOD for the regions of interest, ideally Zambia,
-integration of the satellite and elevation data will be completed, the model
-will be re-run for both temperature and precipitation estimates, and the
-results compared against the accuracy of the relevant satellite data product
+Once NOAA has released GSOD for the regions of interest (ideally Zambia):
+  * Integration of the satellite and elevation data will be completed
+  * The model will be re-run for both temperature and precipitation estimates
+  * The new results will compared against the accuracy of the relevant satellite data product
 (MODIS for temperature, TRMM3B43 for precipitation).
+
 
 ##Running the Model
 The codebase is intentionally set up to not run with one click due as some
