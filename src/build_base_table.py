@@ -25,7 +25,9 @@ def get_nearest_neighbors(tgt_coords, metadata_df, k, min_distance=10):
     df['dists'] = df.coord_pairs.apply(lambda x: great_circle(*x).miles)
     df = df[df['dists'] > min_distance]
     df = df[df.dists.isin(df.dists.nsmallest(k))]
-    return df.index.values.tolist()+df.dists.values.tolist()
+    results = zip(df.index.values.tolist()+df.dists.values.tolist())
+    results.sort(key=lambda x: x[1])
+    return [x[0] for x in results]+[x[1] for x in results]
 
 
 def get_all_nearest_neighbors(Y_df, X_stations, k, min_distance=10):
