@@ -17,14 +17,26 @@ The goal of this project is to use machine learning to extrapolate between
 weather stations separated by unusually long distances.  
 
 ##Data Understanding
+NOAA's metadata for the GSOD turns out to have a very high error rate. Out of the
+thirty thousand stations listed in the metadata, approximately 9% are not actually hosted on
+the FTP server. This can be easily confirmed by hand for the first three
+stations in NOAA's data inventory. An additional 5% of the stations actually
+hosted on the FTP website are not listed in the metadata. For an example, see
+station 999999-00308. The remaining data for Africa are extremely sparse.
+For example, exactly one day of data was found for Zambia in the years of interest
+for this project (when there is satellite data available) though the metadata show
+42 stations each active for several years.
 
-
+Unfortunately, as the GSOD ftp server is organized by year rather than by
+station these limitations were not apparent until the data had been scraped,
+reprocessed, filtered, and aggregated on a per-station basis.  
 
 
 ##Data Preparation
 NOAA provides the GSOD data in a proprietary index delimited text file format.
 It requires extensive reprocessing before it can be used, including:
   * Converting the data to .csv format.
+  * Aggregating single years of station data into one file per station.
   * Unpacking columns that contain multiple data points, such as mean
   temperature and the number of hours in the average, into separate columns.
   * Adding machine readable missing data codes to replace hand written entries
