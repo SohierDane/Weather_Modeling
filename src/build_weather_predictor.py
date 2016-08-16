@@ -80,6 +80,10 @@ def model_temperature():
 
 
 def load_best_model():
+    """
+    Loads the best model from a prior run. Saves several minutes of time
+    when running on a laptop.
+    """
     global model_pickle_path
     return pickle.load(open(model_pickle_path, 'rb'))
 
