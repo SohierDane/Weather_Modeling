@@ -60,15 +60,16 @@ between the neighbors and the label station.
 
 ##Modeling
 Given the lack of data in Africa, I ran the initial tests using a shard of
-Australian stations. To mimic the density of African weather stations, only
-neighbors at least 200 miles from the label station were included.
+Australian stations. To mimic the density of African weather stations, I only
+included neighbors at least 200 miles from the label station.
 
 I ran several different regression models using sklearn's grid search
 cross validation tool: RandomForestRegressor, LinearRegression,
 GradientBoostingRegressor, and AdaBoostRegressor.
 
+
 ##Results & Evaluation
-|                   | R^2   | RMSE | MAE  |
+|                   | R^2^   | RMSE | MAE  |
 |-------------------|-------|------|------|
 | Gradient Boost    | 0.954 | 7.2  | 2.05 |
 | Linear Regression | 0.913 | 13.6 | 2.82 |
