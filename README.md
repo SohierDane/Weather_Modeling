@@ -75,6 +75,7 @@ the best results are achieved using five neighboring stations. This ideal neighb
 ##Results & Evaluation
 As the table below shows, the gradient boost model outperformed
 the other candidates.
+
 |                   | R^2   | RMSE | MAE  |
 |-------------------|-------|------|------|
 | Gradient Boost    | 0.954 | 7.2  | 2.05 |
@@ -84,7 +85,9 @@ the other candidates.
 
 Taking the gradient boosted regressor as a base model, I then evaluated the impact of
 station sparsity on our model's ability to make useful predictions.
+
 ![alt text](https://github.com/SohierDane/Weather_Modeling/blob/master/charts/distance_vs_r2.png)
+
 The error increases linearly with the station spacing, which bodes well for applying
 these methods to the African data when it becomes available.
 
