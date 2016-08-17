@@ -69,7 +69,7 @@ GradientBoostingRegressor, and AdaBoostRegressor.
 
 
 ##Results & Evaluation
-|                   | $R^2$  | RMSE | MAE  |
+|                   | R^2   | RMSE | MAE  |
 |-------------------|-------|------|------|
 | Gradient Boost    | 0.954 | 7.2  | 2.05 |
 | Linear Regression | 0.913 | 13.6 | 2.82 |
