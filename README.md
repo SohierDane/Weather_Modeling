@@ -52,20 +52,28 @@ It requires extensive reprocessing before it can be used, including:
   * Adding machine readable missing data codes to replace hand written entries
   such as "name unknown" or "9999".
 
-Given the lack of data in Africa, I ran the initial tests using a shard of
-Australian stations. Using a random subset of the stations as
-label stations, I identified the five nearest neighboring stations (as measured by the
-haversine distance) and populated the analytics base table with metrics describing
-the relationship between the neighbors and the label station. To mimic the density
-of African weather stations, only neighbors at least 200 miles from the label station
-were included.
+Using a random subset of the stations as label stations, I identified the five
+ nearest neighboring stations (based on the haversine distance) and
+ populated the analytics base table with metrics describing the relationship
+between the neighbors and the label station.
 
 
 ##Modeling
-I evaluated several different regression models using sklearn's grid search
-cross validation tool: RandomForestRegressor, LinearRegression, LassoCV,
-GradientBoostingRegressor, and AdaBoostRegressor. The Gradient Boosted model
-returned the highest cross validated scores.
+Given the lack of data in Africa, I ran the initial tests using a shard of
+Australian stations. To mimic the density of African weather stations, only
+neighbors at least 200 miles from the label station were included.
+
+I ran several different regression models using sklearn's grid search
+cross validation tool: RandomForestRegressor, LinearRegression,
+GradientBoostingRegressor, and AdaBoostRegressor.
+
+##Results & Evaluation
+|                   | R^2   | RMSE | MAE  |
+|-------------------|-------|------|------|
+| Gradient Boost    | 0.954 | 7.2  | 2.05 |
+| Linear Regression | 0.913 | 13.6 | 2.82 |
+| Random Forest     | 0.903 | 15.1 | 2.96 |
+| Ada Boost         | 0.879 | 18.9 | 3.36 |
 
 
 ##Next Steps
