@@ -36,7 +36,7 @@ reprocessed, filtered, and aggregated on a per-station basis.
 In response to these problems I have:
   * Alerted NOAA to the errors.
   * Contacted the AWS team that manages [Amazon's public GSOD mirror](https://aws.amazon.com/datasets/daily-global-weather-measurements-1929-2009-ncdc-gsod/)
-  about hosting a version of GSOD with reprocessed data & corrected metadata
+  about hosting a version of GSOD with reprocessed data & corrected metadata.
   * Launched a separate project ([easy_GSOD](https://github.com/SohierDane/easy_GSOD))
   focused entirely on providing tools downloading, cleaning, and correcting NOAA's
   raw GSOD data.
@@ -52,29 +52,41 @@ It requires extensive reprocessing before it can be used, including:
   * Adding machine readable missing data codes to replace hand written entries
   such as "name unknown" or "9999".
 
-Using a random subset of the stations as label stations, I identified the five
+Using a random subset of the stations as label stations, I identified the
  nearest neighboring stations (based on the haversine distance) and
  populated the analytics base table with metrics describing the relationship
 between the neighbors and the label station.
 
 
 ##Modeling
-Given the lack of data in Africa, I ran the initial tests using a shard of
-Australian stations. To mimic the density of African weather stations, I only
-included neighbors at least 200 miles from the label station.
-
-I ran several different regression models using sklearn's grid search
+I ran several different regression models using scikit-learn's grid search
 cross validation tool: RandomForestRegressor, LinearRegression,
 GradientBoostingRegressor, and AdaBoostRegressor.
 
+Given the lack of data in Africa, I ran the initial tests using a shard of
+Australian stations. To mimic the density of African weather stations, I conducted
+my initial model selection with neighbor stations at least 200 miles from the
+label station. Given that station sparsity, cross validation showed that
+the best results are achieved using five neighboring stations. This ideal neighbor count
+ should be revisited once the African data are available as it may be specific
+ Australian geography.
+
 
 ##Results & Evaluation
+As the table below shows, the gradient boost model outperformed
+the other candidates.
 |                   | R^2   | RMSE | MAE  |
 |-------------------|-------|------|------|
 | Gradient Boost    | 0.954 | 7.2  | 2.05 |
 | Linear Regression | 0.913 | 13.6 | 2.82 |
 | Random Forest     | 0.903 | 15.1 | 2.96 |
 | Ada Boost         | 0.879 | 18.9 | 3.36 |
+
+Taking the gradient boosted regressor as a base model, I then evaluated the impact of
+station sparsity on our model's ability to make useful predictions.
+![alt text](https://github.com/SohierDane/Weather_Modeling/blob/master/charts/distance_vs_r2.png)
+The error increases linearly with the station spacing, which bodes well for applying
+these methods to the African data when it becomes available.
 
 
 ##Next Steps
@@ -83,6 +95,9 @@ Once NOAA has released GSOD for the regions of interest (ideally Zambia):
   * Re-run the model for both temperature and precipitation estimates
   * Compare the results against the accuracy of the relevant satellite data product
 (MODIS for temperature, TRMM3B43 for precipitation).
+  * Enhance the selection of the nearest neighbors to return neighbors that are
+    in a variety of directions from the base station. For example, we would like
+    to avoid selecting all neighbors from one well instrumented city.
 
 
 ##Running the Model
