@@ -1,12 +1,12 @@
 # Weather_Modeling
 
-##Status:
+## Status:
 This project is on hold until NOAA fixes the Global Summary of the Day (GSOD)
 dataset. It is currently missing nearly all of the data listed in NOAA's data
 inventory for the regions of interest. I have notified NOAA of the problem.
 
 
-##Motivation:
+## Motivation:
 To model malaria, you need good data on rainfall and temperature as mosquitoes
 breed in standing water and temperature influences the rate at which the
 parasite matures. However, there are very few ground based weather stations
@@ -17,7 +17,7 @@ The goal of this project is to use machine learning to extrapolate between
 weather stations separated by unusually long distances.  
 
 
-##Data Understanding
+## Data Understanding
 NOAA's metadata for the GSOD turns out to have a very high error rate. Out of the
 thirty thousand stations listed in the metadata, approximately 9% are not actually hosted on
 the FTP server. This can be easily confirmed by hand for the first three
@@ -42,7 +42,7 @@ In response to these problems I have:
   raw GSOD data.
 
 
-##Data Preparation
+## Data Preparation
 NOAA provides the GSOD data in a proprietary index delimited text file format.
 It requires extensive reprocessing before it can be used, including:
   * Converting the data from .op index delimited format to .csv.
@@ -58,7 +58,7 @@ Using a random subset of the stations as label stations, I identified the
 between the neighbors and the label station.
 
 
-##Modeling
+## Modeling
 I ran several different regression models using scikit-learn's grid search
 cross validation tool: RandomForestRegressor, LinearRegression,
 GradientBoostingRegressor, and AdaBoostRegressor.
@@ -72,7 +72,7 @@ the best results are achieved using five neighboring stations. This ideal neighb
  Australian geography.
 
 
-##Results & Evaluation
+## Results & Evaluation
 As the table below shows, the gradient boost model outperformed
 the other candidates.
 
@@ -92,7 +92,7 @@ The error increases linearly with the station spacing, which bodes well for appl
 these methods to the African data when it becomes available.
 
 
-##Next Steps
+## Next Steps
 Once NOAA has released GSOD for the regions of interest (ideally Zambia):
   * Integrate of the satellite and elevation data.
   * Re-run the model for both temperature and precipitation estimates
@@ -103,7 +103,7 @@ Once NOAA has released GSOD for the regions of interest (ideally Zambia):
     to avoid selecting all neighbors from one well instrumented city.
 
 
-##Running the Model
+## Running the Model
 The codebase is intentionally set up to not run with one click due as some
 steps take a very long time to execute but only ever need to be run once.
 
